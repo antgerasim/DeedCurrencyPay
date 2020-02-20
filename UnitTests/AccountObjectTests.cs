@@ -70,10 +70,13 @@ namespace UnitTests
 
         #region Logic Other
         [TestMethod]
-        public void ConvertToCurrency_WithValidAmount()
+        public void ConvertCurrency_WithValidAmount()
         {
-            var exgRate = 0.0159d;
             var account = new Account(new Money(10000, CurrencyEnum.RUB), 1000101, "Igor");
+            //var exgRate = 0.0159d;
+            var exgRate =  CurrencyConverter.GetExchangeRate(dollar, rouble, amount); ;
+
+
             var accountExpected = new Account(new Money(159, CurrencyEnum.USD), 1000101, "Igor");
 
             var accountActual = account.ConvertCurrency(CurrencyEnum.USD, exgRate);
@@ -94,6 +97,8 @@ namespace UnitTests
             var accountActual = account.ConvertCurrency(CurrencyEnum.USD, exgRate);
 
             Assert.AreEqual(accountExpected, accountActual);
+
+            //weiter mit hier
         }
         #endregion
     }

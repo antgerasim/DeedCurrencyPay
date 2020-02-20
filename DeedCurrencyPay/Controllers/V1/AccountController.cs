@@ -16,22 +16,22 @@ namespace DeedCurrencyPay.Controllers.V1
         {
 
         }
-/*
-        // GET: api/Account
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        /*
+                // GET: api/Account
+                [HttpGet]
+                public async Task<IActionResult> Get()
+                {
+                    return new string[] { "value1", "value2" };
+                }
 
 
 
 
-    */
+            */
 
 
-
-
+        //https://stackoverflow.com/questions/50882489/have-a-webapi-controller-send-an-http-request-to-another-rest-service
+        //todo make distinct apigetService for conversionrate and inject in controller
 
         // GET: api/Account
         [HttpGet]

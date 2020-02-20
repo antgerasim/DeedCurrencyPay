@@ -5,106 +5,113 @@ using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.Domain
 {
-    public class Money
+    public sealed class Money : IEquatable<Money>
     {
-        public decimal Amount { get; set; }//todo to private set
-        public Currency SelectedCurrency { get; set; } //todo to private set
+        public decimal Amount { get; }//todo to private set
+        public CurrencyEnum SelectedCurrency { get; } //todo to private set
 
-        public Money(decimal amount, Currency currency)
+        public Money(decimal amount, CurrencyEnum currency)
         {
             this.Amount = amount;
             this.SelectedCurrency = currency;
         }
 
-
-        public static Money ConvertToCurrency(Money sourceValue, Currency destinationCurrency, double exchangeRate)
+        public Money ConvertToCurrency(decimal fromValue, CurrencyEnum toCurrency, double exgRate)
         {
-            if (sourceValue == null || exchangeRate <= 0)
-                throw new InvalidCastException("Wrong amount or exchange rate");
+            if (fromValue <= 0 || exgRate <= 0)// Неверное значение баланса или курса обмена
+                throw new InvalidOperationException("Wrong amount or exchange rate");
 
-            return new Money(sourceValue.Amount * (decimal)exchangeRate, destinationCurrency);
+            return new Money(fromValue * (decimal)exgRate, toCurrency);
         }
 
-        public static bool operator ==(Money firstValue, Money secondValue)
+        public static bool operator ==(Money a, Money b)
         {
-            if ((object)firstValue == null || (object)secondValue == null)
-                return false;
-
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency) return false;
-            return firstValue.Amount == secondValue.Amount; //Bug?
+            //ReferenceEquals избегаем безконечную рекурсию
+            return (object.ReferenceEquals(a, null) && object.ReferenceEquals(b, null)) ||
+                    (!object.ReferenceEquals(a, null) && a.Equals(b));
+        }
+        public static bool operator !=(Money a, Money b)
+        {
+            return !(a == b);
         }
 
-        public static bool operator !=(Money firstValue, Money secondValue)
+        public static bool operator >(Money a, Money b)
         {
-            return !(firstValue == secondValue);
+            CurrencyExceptionCheck(a, b);
+            return a.Amount > b.Amount;
         }
 
-        public static bool operator >(Money firstValue, Money secondValue)
+        public static bool operator <(Money a, Money b)
         {
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency)
-                throw new InvalidOperationException("Comprasion between different currencies is not allowed.");
-
-            return firstValue.Amount > secondValue.Amount;
+            CurrencyExceptionCheck(a, b);
+            if (a == b) return false;
+            return !(a > b);
         }
 
-        public static bool operator <(Money firstValue, Money secondValue)
+        public static bool operator <=(Money a, Money b)
         {
-            if (firstValue == secondValue) return false;
-
-            return !(firstValue > secondValue);
-        }
-
-        public static bool operator <=(Money firstValue, Money secondValue)
-        {
-            if (firstValue < secondValue || firstValue == secondValue) return true;
-
+            CurrencyExceptionCheck(a, b);
+            if (a < b || a == b) return true;
             return false;
         }
-        public static bool operator >=(Money firstValue, Money secondValue)
+        public static bool operator >=(Money a, Money b)
         {
-            if (firstValue > secondValue || firstValue == secondValue) return true;
-
+            CurrencyExceptionCheck(a, b);
+            if (a > b || a == b) return true;
             return false;
         }
 
-        public static Money operator +(Money firstValue, Money secondValue)
+        public static Money operator +(Money a, Money b)
         {
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency)
-            {
-                throw new InvalidCastException("Calculation is using different currencies!");
-            }
-
-            return new Money(firstValue.Amount + secondValue.Amount, firstValue.SelectedCurrency);
+            CurrencyExceptionCheck(a, b);
+            return new Money(a.Amount + b.Amount, a.SelectedCurrency);
         }
 
-        public static Money operator -(Money firstValue, Money secondValue)
+        public static Money operator -(Money a, Money b)
         {
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency)
-            {
-                throw new InvalidCastException("Calculation is using different currencies!");
-            }
-
-            return new Money(firstValue.Amount - secondValue.Amount, firstValue.SelectedCurrency);
+            CurrencyExceptionCheck(a, b);
+            return new Money(a.Amount - b.Amount, a.SelectedCurrency);
         }
 
-        public static Money operator *(Money firstValue, Money secondValue)
+        public static Money operator *(Money a, Money b)
         {
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency)
-            {
-                throw new InvalidCastException("Calculation is using different currencies!");
-            }
-
-            return new Money(firstValue.Amount * secondValue.Amount, firstValue.SelectedCurrency);
+            CurrencyExceptionCheck(a, b);
+            return new Money(a.Amount * b.Amount, a.SelectedCurrency);
         }
 
-        public static Money operator /(Money firstValue, Money secondValue)
+        public static Money operator /(Money a, Money b)
         {
-            if (firstValue.SelectedCurrency != secondValue.SelectedCurrency)
-            {
-                throw new InvalidCastException("Calculation is using different currencies!");
-            }
+            CurrencyExceptionCheck(a, b);
+            return new Money(a.Amount / b.Amount, a.SelectedCurrency);
+        }
 
-            return new Money(firstValue.Amount / secondValue.Amount, firstValue.SelectedCurrency);
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Money);
+        }
+
+        public bool Equals(Money other) //реализация IEquatable<Money>
+        {
+            return other != null && this.Amount == other.Amount && this.SelectedCurrency == other.SelectedCurrency;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Amount.GetHashCode() ^ this.SelectedCurrency.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"{this.Amount} {this.SelectedCurrency}";
+        }
+
+        private static void CurrencyExceptionCheck(Money a, Money b)
+        {
+            if (a.SelectedCurrency != b.SelectedCurrency)
+            {
+                throw new InvalidOperationException("Операция использует разные валюты!");
+            }
         }
     }
 }
+

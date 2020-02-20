@@ -8,17 +8,17 @@ namespace DeedCurrencyPay.Helpers
 {
     public static class EnumUtil
     {
-        public static string ToFriendlyString(this Currency currency)
+        public static string ToFriendlyString(this CurrencyEnum currency)
         {
             switch (currency)
             {
-                case Currency.RUB:
+                case CurrencyEnum.RUB:
                     return "RUB";
-                case Currency.USD:
+                case CurrencyEnum.USD:
                     return "USD";
-                case Currency.EUR:
+                case CurrencyEnum.EUR:
                     return "EUR";
-                case Currency.IDR:
+                case CurrencyEnum.IDR:
                     return "IDR";
                 default:
                     return "Такой валюты не существует";

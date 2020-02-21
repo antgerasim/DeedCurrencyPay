@@ -1,24 +1,21 @@
-﻿using DeedCurrencyPay.ViewModels;
+﻿using DeedCurrencyPay.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.Domain
 {
-
-    public sealed class Account : IEquatable<Account>
+    public class Account : Entity<Account>
     {
-        //private readonly User _user; user HAS A account
-        public Money Balance { get; private set; }
-        private readonly int _Id;
+        public Money _Balance { get; private set; }
+
         private readonly string _UserName;
 
-        public Account(Money balance, int id, string userName)
+        public Account(Money balance, long id, string userName)
         {
-            this.Balance = balance;
-            _Id = id;
+            _Balance = balance;
+            base._Id = id;
             _UserName = userName;
+
         }
 
         public void Deposit(Money money)
@@ -31,12 +28,12 @@ namespace DeedCurrencyPay.Domain
             {
                 throw new InvalidOperationException("Для пополнения кошелька укажите суммму выше нуля.");
             }
-            Balance += money;
+            _Balance += money;
         }
 
         public void Withdraw(Money money)
         {
-            if (money.Amount > Balance.Amount)
+            if (money.Amount > _Balance.Amount)
             {
                 throw new ArgumentOutOfRangeException("Снятие невозможно. Запрашиваемая сумма выше доступных средтв.");
             }
@@ -48,39 +45,35 @@ namespace DeedCurrencyPay.Domain
             {
                 throw new InvalidOperationException("Для снятия денежных средств укажите суммму выше нуля.");
             }
-            Balance -= money;
+            _Balance -= money;
         }
 
-        public Account ConvertCurrency(CurrencyEnum currTo, double exgRate)
+        public Account ConvertCurrency(Currency currTo)
         {
-            var moneyResult = Balance.ConvertToCurrency(Balance.Amount, currTo, exgRate);
-            Balance = moneyResult;
-            return this;            
+            if (currTo == _Balance.SelectedCurrency)
+            {
+                throw new ArgumentException("Invalid Argument! Невозможно конвертировать в одинаковую валюту ");
+            }
+            var conversionResult = new CurrencyService().GetConversionAmount(_Balance.SelectedCurrency, currTo, _Balance.Amount);
+            _Balance = new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo);
+            return this;
         }
+
         //3.d. Получить состояние своего кошелька (сумму денег в каждой из валют)
-        public IEnumerable<Account> GetAccountInfo(IDictionary<CurrencyEnum, double> currencyExgRateDict)
+        public IEnumerable<AccountInfo> GetAccountInfo(IList<Currency> currencyList) //todo replace IEnumerable<AccountInfo> with IEnumerable<Money>?
         {
-            var retVal = currencyExgRateDict.Select(kvp => new Account(this.Balance.ConvertToCurrency(this.Balance.Amount, kvp.Key, kvp.Value), _Id, _UserName));
-            return retVal;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as Account);
-        }
-        public bool Equals(Account other) //реализация IEquatable<Money>
-        {
-            return other != null && this._Id == other._Id && this._UserName == other._UserName;
-        }
-
-        public override int GetHashCode()
-        {
-            return this._Id.GetHashCode() ^ this._UserName.GetHashCode();
+            var accountInfoList = new List<AccountInfo>();
+            foreach (var curr in currencyList)
+            {
+                var account = ConvertCurrency(curr);
+                accountInfoList.Add(new AccountInfo(new Money(account._Balance.Amount, account._Balance.SelectedCurrency))); //caution immutability value reference stuff
+            }
+            return accountInfoList;
         }
 
         public override string ToString()
         {
-            return $"{this._UserName} {this._Id}";
+            return $"{base._Id} {_UserName} {_Balance}";
         }
     }
 }

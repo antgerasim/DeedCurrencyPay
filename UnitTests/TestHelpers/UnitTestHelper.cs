@@ -1,9 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
-namespace UnitTests
+namespace UnitTests.TestHelpers
 {
-    internal static class UnitTestHelper<T>
+    internal class UnitTestHelper<T>
     {
         internal static void ValueEqualityTest(HashSet<T> hashSet, T equalA, T equalB, T nonEqualC)
         {
@@ -23,6 +26,15 @@ namespace UnitTests
 
         }
 
-
+        internal static bool IsImmutable(Type type)
+        {
+            if (type.IsPrimitive) return true;
+            if (type == typeof(string)) return true;
+            var fieldInfos = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var isShallowImmutable = fieldInfos.All(f => f.IsInitOnly);
+            if (!isShallowImmutable) return false;
+            var isDeepImmutable = fieldInfos.All(f => IsImmutable(f.FieldType));
+            return isDeepImmutable;
+        }
     }
 }

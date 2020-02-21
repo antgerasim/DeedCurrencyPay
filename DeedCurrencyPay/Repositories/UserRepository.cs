@@ -19,46 +19,15 @@ namespace DeedCurrencyPay.Repositories
 
         public User GetById(int id)
         {
-            return _users.SingleOrDefault(x => x.Id == id);
+            return _users.SingleOrDefault(x => x._Id == id);
         }
 
         private void InitUsers()
         {
-
-            _users.Add(new User
-            {
-                Id = 1,
-                Name = "Igor",
-                Account = new Account(new Money(10000, CurrencyEnum.RUB), 1000101, "Igor")
-            });
-            _users.Add(new User
-            {
-                Id = 2,
-                Name = "Yulia",
-                Account = new Account(new Money(300000, CurrencyEnum.IDR), 1000102, "Yulia")
-            });
+            _users.Add(new User(100001, "Igor", new Account(new Money(10000, Currency.RUB), 1000101, "Igor"), 
+                new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR }));
+            _users.Add(new User(100002, "Yulia", new Account(new Money(300000, Currency.IDR), 1000102, "Yulia"), 
+                new List<Currency> { Currency.IDR }));
         }
-
-        /*private void InitUsers()
-        {
-            _users.Add(new User
-            {
-                Id = 1,
-                Accounts = new List<Account>()
-            {
-                new Account(new Money(10000, Currency.RUB)),
-                new Account(new Money(100, Currency.USD)),
-                new Account(new Money(200, Currency.EUR))
-            }
-            });
-            _users.Add(new User
-            {
-                Id = 2,
-                Accounts = new List<Account>()
-            {
-                new Account(new Money(300000, Currency.IDR))
-            }
-            });
-        }*/
     }
 }

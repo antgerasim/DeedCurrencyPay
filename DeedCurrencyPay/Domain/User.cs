@@ -5,33 +5,25 @@ using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.Domain
 {
-    public class User : IEquatable<User>
+    public class User : Entity<User>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Account Account { get; set; }
+
+        public string Name { get; private set; }
+        public Account Account { get; private set; }
         // public IList<Account> Accounts { get; set; }?
+        public IEnumerable<Currency> Currencies { get; private set; }
 
-        public IList<CurrencyEnum> Currencies { get; set; }
-
-        public override bool Equals(object obj)
+        public User(long id, string name, Account account, IEnumerable<Currency> currencies)
         {
-            return this.Equals(obj as User);
-        }
-
-        public bool Equals(User other) //реализация IEquatable<Money>
-        {
-            return other != null && this.Id == other.Id && this.Name == other.Name;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode() ^ this.Name.GetHashCode();
+            base._Id = id;
+            Name = name;
+            Account = account;
+            Currencies = currencies;
         }
 
         public override string ToString()
         {
-            return $"{this.Id} {this.Name}";
+            return $"{base._Id} {this.Name}";
         }
     }
 }

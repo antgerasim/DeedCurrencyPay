@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DeedCurrencyPay.ViewModels;
 
 namespace DeedCurrencyPay.Services
 {
     public interface IAccountService
     {
-       // Deposti
+        AccountInfoVm ConvertCurrency(int userId, string currTo);
+        AccountInfoVm Deposit(int userId, decimal amount);
+        AccountInfoVm Withdraw(int userId, decimal amount);
     }
 }

@@ -9,7 +9,7 @@ namespace DeedCurrencyPay.ViewModels
     public class AccountInfoVm
     {
         public decimal Balance { get; set; }
-        public CurrencyEnum Currency { get; set; }
+        public Currency Currency { get; set; }
         public String Message { get; set; }
     }
 }

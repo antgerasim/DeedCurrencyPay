@@ -1,18 +1,33 @@
-﻿using DeedCurrencyPay.Helpers;
+﻿using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Helpers;
 using System;
 using System.Globalization;
 using System.Xml;
 
-namespace DeedCurrencyPay.Domain
+namespace DeedCurrencyPay.Services
 {
-    public class CurrencyConverter
+    public class CurrencyService
     {
-        private const CurrencyEnum LeadCurrency = CurrencyEnum.EUR;
+        private readonly Currency LeadCurrency;
+        private readonly string ApiRoute;
 
-        public static ConversionResult GetExchangeRate(CurrencyEnum fromCurr, CurrencyEnum toCurr, decimal amount = 1)
+        public CurrencyService()
+        {
+            //todo appsettings
+            LeadCurrency = Currency.EUR;
+            ApiRoute = @"http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        }
+
+        public ConversionAmount GetConversionAmount(Currency fromCurr, Currency toCurr, decimal amount)
+        {
+            var cExchangeRateRslt = GetConversionExchangeRate(fromCurr, toCurr, amount);
+            return new ConversionAmount (fromCurr, toCurr, cExchangeRateRslt.ExchangeRateValue);
+        }
+
+        public ConversionExchangeRate GetConversionExchangeRate(Currency fromCurr, Currency toCurr, decimal amount = 1)
         {
             if (fromCurr == LeadCurrency && toCurr == LeadCurrency)
-            {                
+            {
                 throw new ArgumentException("Invalid Argument! Не могу получить курс обмена валюты с Евро на Евро");
             }
             try
@@ -25,26 +40,26 @@ namespace DeedCurrencyPay.Domain
                 {
                     toRate = GetCurrencyRateInEuro(toCurr.ToFriendlyString());
                     rsltRate = (amount * toRate);
-                    return new ConversionResult(fromCurr, toCurr, rsltRate);
+                    return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
                 }
                 if (toCurr == LeadCurrency)
                 {
                     fromRate = GetCurrencyRateInEuro(fromCurr.ToFriendlyString());
                     rsltRate = (amount / fromRate);
-                    return new ConversionResult(fromCurr, toCurr, rsltRate);
+                    return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
                 }
                 toRate = GetCurrencyRateInEuro(toCurr.ToFriendlyString()) / 1;
                 fromRate = GetCurrencyRateInEuro(fromCurr.ToFriendlyString()) / 1;
                 rsltRate = (amount * toRate) / fromRate;
-                return new ConversionResult(fromCurr, toCurr, rsltRate);
+                return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
             }
             catch
             {
-                return default(ConversionResult);
+                return default(ConversionExchangeRate);
             }
         }
 
-        private static decimal GetCurrencyRateInEuro(string targetCurr)
+        private decimal GetCurrencyRateInEuro(string targetCurr)
         {
             if (targetCurr == "")
                 throw new ArgumentException("Invalid Argument! Параметр currency не может быть пустым!");
@@ -54,7 +69,7 @@ namespace DeedCurrencyPay.Domain
             try
             {
                 var doc = new XmlDocument();
-                doc.Load(@"http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");//todo appsettings
+                doc.Load(ApiRoute);
 
                 XmlNodeList nodes = doc.SelectNodes("//*[@currency]");
 
@@ -62,9 +77,9 @@ namespace DeedCurrencyPay.Domain
                 {
                     foreach (XmlNode node in nodes)
                     {
-                        var nodeCurr = node.Attributes["currency"].Value.ToLower();
+                        var nodeCurr = node.Attributes["currency"].Value;
                         if (nodeCurr == targetCurr)
-                        {                            
+                        {
                             return Decimal.Parse(node.Attributes["rate"].Value, NumberStyles.Any, new CultureInfo("en-Us"));
                         }
                     }

@@ -17,31 +17,31 @@ namespace DeedCurrencyPay.Services
             this.userRepository = userRepository;
         }
 
-        public AccountInfoVm Deposit(int userId, decimal amount, string currency)//make async
+        public AccountInfoVm Deposit(int userId, decimal amount)//make async
         {
             var user = userRepository.GetById(userId);
-            user.Account.Deposit(new Money(amount, currency.ToEnum<CurrencyEnum>()));
-            return CreateAccountInfoVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, "Кошелек пополнен на: ");
+            user.Account.Deposit(new Money(amount, user.Account._Balance.SelectedCurrency));
+            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, "Кошелек пополнен на: ");
         }
-        public AccountInfoVm Withdraw(int userId, decimal amount, string currency)//replace string with responseVm(Ok, Bad)
+        public AccountInfoVm Withdraw(int userId, decimal amount)//replace string with responseVm(Ok, Bad)
         {
             var user = userRepository.GetById(userId);
-            user.Account.Withdraw(new Money(amount, currency.ToEnum<CurrencyEnum>()));
-            var responseMsg = $"Снятие наличных на {user.Account.Balance.Amount} {user.Account.Balance.SelectedCurrency}";
-            return CreateAccountInfoVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
+            user.Account.Withdraw(new Money(amount, user.Account._Balance.SelectedCurrency));
+            var responseMsg = $"Снятие наличных на {user.Account._Balance.Amount} {user.Account._Balance.SelectedCurrency}";
+            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, responseMsg);
         }
 
-        public AccountInfoVm ConvertCurrency(int userId, string currTo, double exgRate)//or remove exgRate and make xml api call from here
+        public AccountInfoVm ConvertCurrency(int userId, string currTo)
         {
             var user = userRepository.GetById(userId);
-            var accountInfo = user.Account.ConvertCurrency(currTo.ToEnum<CurrencyEnum>(), exgRate);
+            var account = user.Account.ConvertCurrency(currTo.ToEnum<Currency>());
 
-            return CreateAccountInfoVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, $"Конвертация валюты с {user.Account.Balance.SelectedCurrency.ToFriendlyString()}. Состояние счета: "); ;
+            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, account.ToString());
         }
 
-        private AccountInfoVm CreateAccountInfoVm(decimal accountBalance, CurrencyEnum accountCurrency, string message)//todo to static class string
+        private AccountInfoVm CreateAccountInfoVm(decimal accountBalance, Currency accountCurrency, string message)
         {
-            var responseMsg = $"{message}{accountBalance}. Валюта: {accountCurrency}";
+            //var responseMsg = $"{message}{accountBalance}. Валюта: {accountCurrency}";
             return new AccountInfoVm() { Balance = accountBalance, Currency = accountCurrency, Message = message };
         }
 

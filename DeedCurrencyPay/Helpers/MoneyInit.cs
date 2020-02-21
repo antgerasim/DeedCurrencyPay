@@ -1,8 +1,6 @@
 ﻿using DeedCurrencyPay.Domain;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.Helpers
 {
@@ -21,6 +19,15 @@ namespace DeedCurrencyPay.Helpers
             return dupeMoneyList;
         }
 
+        public static IEnumerable<Money> GetOperatorTestMoney()
+        {
+            return new[]
+            {
+                new Money(100, Currency.USD),
+                new Money(200, Currency.EUR)
+            };
+        }
+
         private static IEnumerable<Money> GetBaseMoneyList()
         {
             var moneyList = new List<Money>();
@@ -30,9 +37,3 @@ namespace DeedCurrencyPay.Helpers
         }
     }
 }
-
-/*
-var x = new Money(100, Currency.USD);
-var y = new Money(100, Currency.USD);
-var z = new Money(300, Currency.IDR);
-*/

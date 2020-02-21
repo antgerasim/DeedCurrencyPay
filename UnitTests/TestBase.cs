@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DeedCurrencyPay.Helpers;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -22,6 +23,7 @@ namespace UnitTests
         protected IEnumerable<Account> dupeAccounts;
         protected IEnumerable<Money> uniqueMoneyList;
         protected IEnumerable<Money> dupeMoneyList;
+        protected Money[] basicTestMoneyArray;
 
         [TestInitialize]
         protected void TestBaseInitialize()
@@ -38,6 +40,7 @@ namespace UnitTests
 
             uniqueMoneyList = MoneyInit.GetMoneyList();
             dupeMoneyList = MoneyInit.GetMoneyListWithDuplicates();
+            basicTestMoneyArray = MoneyInit.GetOperatorTestMoney().ToArray();
         }
     }
 }

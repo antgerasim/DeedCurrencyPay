@@ -6,11 +6,10 @@ using System.Xml;
 
 namespace DeedCurrencyPay.Services
 {
-    public class CurrencyService
+    public class CurrencyService : ICurrencyService
     {
-        private readonly Currency LeadCurrency;
         private readonly string ApiRoute;
-
+        private readonly Currency LeadCurrency;
         public CurrencyService()
         {
             //todo appsettings
@@ -21,14 +20,14 @@ namespace DeedCurrencyPay.Services
         public ConversionAmount GetConversionAmount(Currency fromCurr, Currency toCurr, decimal amount)
         {
             var cExchangeRateRslt = GetConversionExchangeRate(fromCurr, toCurr, amount);
-            return new ConversionAmount (fromCurr, toCurr, cExchangeRateRslt.ExchangeRateValue);
+            return new ConversionAmount(fromCurr, toCurr, cExchangeRateRslt.ExchangeRateValue);
         }
 
         public ConversionExchangeRate GetConversionExchangeRate(Currency fromCurr, Currency toCurr, decimal amount = 1)
         {
             if (fromCurr == LeadCurrency && toCurr == LeadCurrency)
             {
-                throw new ArgumentException("Invalid Argument! Не могу получить курс обмена валюты с Евро на Евро");
+                throw new ArgumentException("Не могу получить курс обмена валюты с Евро на Евро");
             }
             try
             {
@@ -38,18 +37,18 @@ namespace DeedCurrencyPay.Services
 
                 if (fromCurr == LeadCurrency)
                 {
-                    toRate = GetCurrencyRateInEuro(toCurr.ToFriendlyString());
+                    toRate = GetCurrencyRateInEuro(toCurr);
                     rsltRate = (amount * toRate);
                     return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
                 }
                 if (toCurr == LeadCurrency)
                 {
-                    fromRate = GetCurrencyRateInEuro(fromCurr.ToFriendlyString());
+                    fromRate = GetCurrencyRateInEuro(fromCurr);
                     rsltRate = (amount / fromRate);
                     return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
                 }
-                toRate = GetCurrencyRateInEuro(toCurr.ToFriendlyString()) / 1;
-                fromRate = GetCurrencyRateInEuro(fromCurr.ToFriendlyString()) / 1;
+                toRate = GetCurrencyRateInEuro(toCurr) / 1;
+                fromRate = GetCurrencyRateInEuro(fromCurr) / 1;
                 rsltRate = (amount * toRate) / fromRate;
                 return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
             }
@@ -59,12 +58,12 @@ namespace DeedCurrencyPay.Services
             }
         }
 
-        private decimal GetCurrencyRateInEuro(string targetCurr)
+        private decimal GetCurrencyRateInEuro(Currency targetCurr)
         {
-            if (targetCurr == "")
-                throw new ArgumentException("Invalid Argument! Параметр currency не может быть пустым!");
-            if (targetCurr == "eur")
-                throw new ArgumentException("Invalid Argument! Не могу получить курс обмена валюты с Евро на Евро");
+            if (targetCurr == null)
+                throw new ArgumentException("Параметр currency не может быть пустым!");
+            if (targetCurr == Currency.EUR)
+                throw new ArgumentException("Не могу получить курс обмена валюты с Евро на Евро");
 
             try
             {
@@ -78,11 +77,10 @@ namespace DeedCurrencyPay.Services
                     foreach (XmlNode node in nodes)
                     {
                         var nodeCurr = node.Attributes["currency"].Value;
-                        if (nodeCurr == targetCurr)
+                        if (nodeCurr == targetCurr.Name)
                         {
                             return Decimal.Parse(node.Attributes["rate"].Value, NumberStyles.Any, new CultureInfo("en-Us"));
-                        }
-                    }
+                        } }
                 }
                 return default(decimal);
             }

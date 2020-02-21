@@ -1,18 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace DeedCurrencyPay.Domain
 {
-    public class AccountInfo
+    public sealed class AccountInfo//valueobject mode
     {
-        public Money Money { get; }
+        private readonly Money _Balance;
+        private readonly IEnumerable<Money> _MoneyListOtherCurrencies;
 
-        public AccountInfo(Money money)
+        public AccountInfo(Money balance, IEnumerable<Money> moneyList)
         {
-            Money = money;
+            this._Balance = balance;
+
+            this._MoneyListOtherCurrencies = moneyList;
         }
+
+        public override string ToString()
+        { 
+            var sb = new StringBuilder($"Основной баланс кошелька: {this._Balance.ToString() }.@");
         
+            sb.Append($"Баланс кошелька в других валютах:@");
+
+            foreach (var money in _MoneyListOtherCurrencies)
+            {
+                if (money.SelectedCurrency == _Balance.SelectedCurrency)//не ковертируем в одинаковые валюты - перенести проверку в аккаунт
+                {
+                    continue;
+                }
+                sb.Append($"{money.ToString()}@");
+            }
+
+            return sb.ToString().Replace("@", Environment.NewLine);
+        }
     }
 }

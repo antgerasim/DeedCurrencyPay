@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DeedCurrencyPay.Helpers
 {
     public static class EnumUtil
-    {
+    {/*
         public static string ToFriendlyString(this Currency currency)
         {
             switch (currency)
@@ -29,6 +29,8 @@ namespace DeedCurrencyPay.Helpers
         {
             return (T)Enum.Parse(typeof(T), value, true);
         }
+
+        */
 
     }
 }

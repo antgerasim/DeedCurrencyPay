@@ -6,34 +6,64 @@ namespace DeedCurrencyPay.Domain
 {
     public class Account : Entity<Account>
     {
-        public Money _Balance { get; private set; }
-
-        private readonly string _UserName;
-
-        public Account(Money balance, long id, string userName)
+        public Account(Money balance, long id, string userName, IEnumerable<Currency> currencies)
         {
-            _Balance = balance;
-            base._Id = id;
-            _UserName = userName;
+            Balance = balance;
+            base.Id = id;
+            UserName = userName;
+            Currencies = currencies;
+        }
 
+        public Money Balance { get; private set; }
+        public IEnumerable<Currency> Currencies { get; private set; }
+        //для усиления идентичности (Equals, GetHashCode) дублируем имя из User
+        public string UserName { get; private set; }
+
+        public Account ConvertToCurrency(Currency toCurrency, ICurrencyService currencyService)
+        {
+            if (toCurrency == Balance.SelectedCurrency)
+            {
+                throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
+            }
+            var conversionResult = currencyService.GetConversionAmount(Balance.SelectedCurrency, toCurrency, Balance.Amount);
+            Balance = new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo);
+            return this;
         }
 
         public void Deposit(Money money)
         {
-            if (money.Amount < 0)
-            {
+            if (money.Amount < 0) {
                 throw new ArgumentOutOfRangeException("Пополнение невозможно. Значение не может быть ниже нуля.");
             }
             if (money.Amount == 0)
             {
                 throw new InvalidOperationException("Для пополнения кошелька укажите суммму выше нуля.");
             }
-            _Balance += money;
+            Balance += money;
+        }
+
+        // 3.d. Получить состояние своего кошелька (сумму денег в каждой из валют).
+        // Передумать механизм, если после конвертации меняется текущий баланс кошелька!
+        public AccountInfo GetAccountInfo(ICurrencyService currencyService)
+        {
+            var moneyList = new List<Money>();
+            foreach (var targetCurrency in Currencies)
+            {
+                if (targetCurrency == Balance.SelectedCurrency)
+                {
+                    continue;
+                }
+
+                var account = this.ConvertToCurrency(targetCurrency, currencyService);
+                moneyList.Add(new Money(account.Balance.Amount, account.Balance.SelectedCurrency));
+            }
+            var retVal = new AccountInfo(this.Balance, moneyList);
+            return retVal;
         }
 
         public void Withdraw(Money money)
         {
-            if (money.Amount > _Balance.Amount)
+            if (money.Amount > Balance.Amount)
             {
                 throw new ArgumentOutOfRangeException("Снятие невозможно. Запрашиваемая сумма выше доступных средтв.");
             }
@@ -45,35 +75,12 @@ namespace DeedCurrencyPay.Domain
             {
                 throw new InvalidOperationException("Для снятия денежных средств укажите суммму выше нуля.");
             }
-            _Balance -= money;
-        }
-
-        public Account ConvertCurrency(Currency currTo)
-        {
-            if (currTo == _Balance.SelectedCurrency)
-            {
-                throw new ArgumentException("Invalid Argument! Невозможно конвертировать в одинаковую валюту ");
-            }
-            var conversionResult = new CurrencyService().GetConversionAmount(_Balance.SelectedCurrency, currTo, _Balance.Amount);
-            _Balance = new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo);
-            return this;
-        }
-
-        //3.d. Получить состояние своего кошелька (сумму денег в каждой из валют)
-        public IEnumerable<AccountInfo> GetAccountInfo(IList<Currency> currencyList) //todo replace IEnumerable<AccountInfo> with IEnumerable<Money>?
-        {
-            var accountInfoList = new List<AccountInfo>();
-            foreach (var curr in currencyList)
-            {
-                var account = ConvertCurrency(curr);
-                accountInfoList.Add(new AccountInfo(new Money(account._Balance.Amount, account._Balance.SelectedCurrency))); //caution immutability value reference stuff
-            }
-            return accountInfoList;
+            Balance -= money;
         }
 
         public override string ToString()
         {
-            return $"{base._Id} {_UserName} {_Balance}";
+            return $"{base.Id} {UserName} {Balance}";
         }
     }
 }

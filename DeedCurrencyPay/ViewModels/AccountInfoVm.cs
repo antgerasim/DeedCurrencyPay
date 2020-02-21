@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.ViewModels
 {
-    public class AccountInfoVm
+    public class ResponseVm
     {
         public decimal Balance { get; set; }
         public Currency Currency { get; set; }

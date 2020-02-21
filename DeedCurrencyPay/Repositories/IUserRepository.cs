@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.Repositories
 {
-    interface IUserRepository
+    public interface IUserRepository
     {
         User GetById(int id);
     }

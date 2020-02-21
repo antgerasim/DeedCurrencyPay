@@ -1,29 +1,24 @@
 ﻿using DeedCurrencyPay.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using UnitTests.TestHelpers;
 
 namespace UnitTests
 {
     [TestClass]
-    public class UserEntityTests
+    public class UserEntityTests : TestBase
     {
-        [TestMethod]
-        public void Is_Account_ValueEqual()
+        [TestInitialize]
+        public void Setup()
         {
-            var x = new User(100001, "Igor", new Account(new Money(10000, Currency.RUB), 1000101, "Igor"),
-                new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR });
+            TestBaseInitialize();
+        }
 
-            var y = new User(100001, "Igor", new Account(new Money(10000, Currency.RUB), 1000101, "Igor"),
-                new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR });
-
-            var z = new User(100002, "Yulia", new Account(new Money(300000, Currency.IDR), 1000102, "Yulia"),
-                new List<Currency> { Currency.IDR });
-
-            HashSet<User> hashSet = new HashSet<User>();
-            UnitTestHelper<User>.ValueEqualityTest(hashSet, x, y, z);
+        [TestMethod]
+        public void Is_User_ValueEqual()
+        {
+            var dupeUsers = base.dupeUsers.ToList();
+            Assert.IsFalse(UnitTestHelper<User>.Can_Add_Duplicate_To_HashSet(dupeUsers));
         }
     }
 }

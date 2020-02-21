@@ -2,50 +2,58 @@
 using DeedCurrencyPay.Helpers;
 using DeedCurrencyPay.Repositories;
 using DeedCurrencyPay.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DeedCurrencyPay.Services
 {
     internal class AccountService : IAccountService
     {
+        private readonly ICurrencyService currencyService;
         private readonly IUserRepository userRepository;
-
-        public AccountService(IUserRepository userRepository)
+        public AccountService(IUserRepository userRepository, ICurrencyService currencyService)
         {
             this.userRepository = userRepository;
+            this.currencyService = currencyService;
         }
 
-        public AccountInfoVm Deposit(int userId, decimal amount)//make async
+        public ResponseVm ConvertToCurrency(int userId, string targetCurrency)
         {
             var user = userRepository.GetById(userId);
-            user.Account.Deposit(new Money(amount, user.Account._Balance.SelectedCurrency));
-            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, "Кошелек пополнен на: ");
+            var account = user.Account.ConvertToCurrency(Currency.Parse(targetCurrency.ToUpper()), currencyService);
+
+            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, account.ToString());
         }
-        public AccountInfoVm Withdraw(int userId, decimal amount)//replace string with responseVm(Ok, Bad)
+
+        public ResponseVm Deposit(int userId, decimal amount)//make async
         {
             var user = userRepository.GetById(userId);
-            user.Account.Withdraw(new Money(amount, user.Account._Balance.SelectedCurrency));
-            var responseMsg = $"Снятие наличных на {user.Account._Balance.Amount} {user.Account._Balance.SelectedCurrency}";
-            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, responseMsg);
+            user.Account.Deposit(new Money(amount, user.Account.Balance.SelectedCurrency));
+            var responseMsg = $"Кошелек пополнен на:  {user.Account.Balance.ToString()}.";
+
+            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
 
-        public AccountInfoVm ConvertCurrency(int userId, string currTo)
+        public ResponseVm GetAccountInfo(int userId)
         {
             var user = userRepository.GetById(userId);
-            var account = user.Account.ConvertCurrency(currTo.ToEnum<Currency>());
+            var accountInfo = user.Account.GetAccountInfo(currencyService);
+            var responseMsg = $"{accountInfo.ToString()}.";
 
-            return CreateAccountInfoVm(user.Account._Balance.Amount, user.Account._Balance.SelectedCurrency, account.ToString());
+            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
 
-        private AccountInfoVm CreateAccountInfoVm(decimal accountBalance, Currency accountCurrency, string message)
+        public ResponseVm Withdraw(int userId, decimal amount)
         {
-            //var responseMsg = $"{message}{accountBalance}. Валюта: {accountCurrency}";
-            return new AccountInfoVm() { Balance = accountBalance, Currency = accountCurrency, Message = message };
+            var user = userRepository.GetById(userId);
+            user.Account.Withdraw(new Money(amount, user.Account.Balance.SelectedCurrency));
+            var responseMsg = $"Снятие наличных. Баланс {user.Account.Balance.ToString()}.";
+
+            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
 
+        private ResponseVm CreateResponseVm(decimal accountBalance, Currency accountCurrency, string message)
+        {
+            return new ResponseVm() { Balance = accountBalance, Currency = accountCurrency, Message = message };
+        }
     }
 }
 
-//todo delete Account Class, replace with AccountService?

@@ -6,7 +6,7 @@ using System;
 namespace UnitTests
 {
     [TestClass]
-    public class CurrencyServiceTest
+    public class CurrencyServiceTest : TestBase
     {
         #region Exception Test
         [TestMethod]

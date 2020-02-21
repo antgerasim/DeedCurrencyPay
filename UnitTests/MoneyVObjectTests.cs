@@ -9,141 +9,101 @@ using UnitTests.TestHelpers;
 namespace UnitTests
 {
     [TestClass]
-    public class MoneyVObjectTests
+    public class MoneyVObjectTests : TestBase
     {
+        [TestInitialize]
+        public void Setup()
+        {
+            TestBaseInitialize();
+        }
+
         [TestMethod]
         public void Is_Money_ValueEqual()
         {
-            var x = new Money(100, Currency.USD);
-            var y = new Money(100, Currency.USD);
-            var z = new Money(300, Currency.IDR);
-
-            HashSet<Money> hashSet = new HashSet<Money>();
-            UnitTestHelper<Money>.ValueEqualityTest(hashSet, x, y, z);
+            var dupeMoneyList = base.dupeMoneyList.ToList();
+            Assert.IsFalse(UnitTestHelper<Money>.Can_Add_Duplicate_To_HashSet(dupeMoneyList));
         }
 
         [TestMethod]
         public void Is_Money_Immutable()
         {
-            //var x = new Money(100, Currency.USD);       
-            //var z = new Money(300, Currency.IDR);
-
-
-            UnitTestHelper<Money>.IsImmutable(typeof(Money));
+            Assert.IsTrue(UnitTestHelper<Money>.Is_Immutable(typeof(Money)));
         }
 
         #region Exception Test
 
         [TestMethod]
-        public void When_ConvertFromValue_Is_Null_InvalidOperationException()
-        {
-            var money = new Money(100, Currency.USD);           
-
-            Assert.ThrowsException<InvalidOperationException>(() => money.ConvertToCurrency(0, Currency.USD, 1.11m));
-        }
-
-        [TestMethod]
-        public void When_ExgRate_Is_Less_Or_Equal_Zero_InvalidOperationException()
-        {
-            var money = new Money(100, Currency.USD);
-            var fromValue = new Money(10000, Currency.RUB);
-            var exgRateZero = default(decimal);
-            var exgRateNegative = -1m;
-
-            Assert.ThrowsException<InvalidOperationException>(() => money.ConvertToCurrency(100, Currency.USD, exgRateZero));
-            Assert.ThrowsException<InvalidOperationException>(() => money.ConvertToCurrency(100, Currency.USD, exgRateNegative));
-
-        }
-
-        [TestMethod]
-        public void OperatorGreaterThen_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorGreaterThen_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA > moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA > moneyB);
         }
         [TestMethod]
-        public void OperatorLessThen_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorLessThen_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA < moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA < moneyB);
         }
         [TestMethod]
-        public void OperatorLessThenOrEquals_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorLessThenOrEquals_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA <= moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA <= moneyB);
         }
 
         [TestMethod]
-        public void OperatorGreaterThenOrEquals_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorGreaterThenOrEquals_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA >= moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA >= moneyB);
         }
 
         [TestMethod]
-        public void OperatorAddition_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorAddition_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA + moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA + moneyB);
         }
 
         [TestMethod]
-        public void OperatorSubstracton_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorSubstracton_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA - moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA - moneyB);
         }
 
         [TestMethod]
-        public void OperatorDivision_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorDivision_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA / moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA / moneyB);
         }
 
         [TestMethod]
-        public void OperatorMultiplication_When_Money_Currency_Not_Same_InvalidOperationException()
+        public void OperatorMultiplication_When_Money_Currency_Not_Same_ArgumentException()
         {
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(200, Currency.EUR);
 
-            Assert.ThrowsException<InvalidOperationException>(() => moneyA * moneyB);
+            Assert.ThrowsException<ArgumentException>(() => moneyA * moneyB);
         }
         #endregion
 
         #region Logic - Boolean operators
-
-        [TestMethod]
-        public void ConvertToCurrency_WithValidAmount()
-        {
-            
-            var fromValue = new Money(10000, Currency.RUB);
-            var exgRate = 0.0159m;
-            var expectedValid = new Money(159, Currency.USD); //make Assert.NotEqual other currency and resultValue
-            var expectedInValidCurr = new Money(159, Currency.IDR);
-            var expectedInValidAmount = new Money(250, Currency.USD);
-
-            var actual = fromValue.ConvertToCurrency(fromValue.Amount,Currency.USD, exgRate);
-
-            Assert.AreEqual(expectedValid, actual);
-            Assert.AreNotEqual(expectedInValidCurr, actual);
-            Assert.AreNotEqual(expectedInValidAmount, actual);
-        }
 
         [TestMethod]
         public void Operator_Equality_Test()
@@ -163,7 +123,7 @@ namespace UnitTests
             var moneyC = new Money(150, Currency.USD);
 
             Assert.IsTrue(moneyA != moneyC);
-            Assert.IsFalse(moneyA != moneyB);            
+            Assert.IsFalse(moneyA != moneyB);
         }
 
         [TestMethod]
@@ -173,7 +133,7 @@ namespace UnitTests
             var moneyB = new Money(100, Currency.USD);
             var moneyC = new Money(150, Currency.USD);
 
-            Assert.IsTrue(moneyC > moneyA);          
+            Assert.IsTrue(moneyC > moneyA);
         }
 
         [TestMethod]
@@ -183,7 +143,7 @@ namespace UnitTests
             var moneyB = new Money(100, Currency.USD);
             var moneyC = new Money(150, Currency.USD);
 
-            Assert.IsTrue(moneyA < moneyC);                 
+            Assert.IsTrue(moneyA < moneyC);
         }
 
         [TestMethod]
@@ -192,7 +152,7 @@ namespace UnitTests
             var moneyA = new Money(100, Currency.USD);
             var moneyB = new Money(100, Currency.USD);
             var moneyC = new Money(150, Currency.USD);
-          
+
             Assert.IsTrue(moneyA <= moneyC);
             Assert.IsTrue(moneyA == moneyB);
         }
@@ -234,7 +194,7 @@ namespace UnitTests
             var moneyNeg1 = new Money(-500, Currency.USD);
             var moneyNeg2 = new Money(-300, Currency.USD);
 
-            var expectedPos = new Money(100, Currency.USD);            
+            var expectedPos = new Money(100, Currency.USD);
             var actualPos = moneyB - moneyA;
 
             var expectedNeg1 = new Money(-100, Currency.USD);

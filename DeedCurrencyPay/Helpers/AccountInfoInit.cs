@@ -25,8 +25,8 @@ namespace DeedCurrencyPay.Helpers
         {
             var moneyArray = MoneyInit.GetMoneyList().ToArray();
             return new List<AccountInfo>() {
-                new AccountInfo(moneyArray[0], new MoneyList(moneyArray.Take(4))),
-                new AccountInfo(moneyArray[4], new MoneyList(moneyArray.Skip(4).Take(4)))};
+                new AccountInfo(moneyArray[0], new ValueObjectList(moneyArray.Take(4))),
+                new AccountInfo(moneyArray[4], new ValueObjectList(moneyArray.Skip(4).Take(4)))};
         }
     }
 }

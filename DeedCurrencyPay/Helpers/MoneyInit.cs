@@ -6,21 +6,15 @@ namespace DeedCurrencyPay.Helpers
 {
     public static class MoneyInit
     {
-        public static MoneyList GetMoneyList()
+        public static ValueObjectList GetMoneyList()
         {
             return GetBaseMoneyList();
         }
 
-        public static MoneyList GetMoneyListWithDuplicates()
+        public static ValueObjectList GetMoneyListWithDuplicates()
         {
-            var list1 = new List<string>();
-            var list2 = new List<string>();
-            list1.AddRange(list2);
-            
-
             var baseMoneyList = GetBaseMoneyList();
-            MoneyList dupeMoneyList = baseMoneyList.AddRange(GetBaseMoneyList());            
-
+            var dupeMoneyList = baseMoneyList.AddRange(GetBaseMoneyList());
             return dupeMoneyList;
         }
 
@@ -33,9 +27,9 @@ namespace DeedCurrencyPay.Helpers
             };
         }
 
-        private static MoneyList GetBaseMoneyList()
+        private static ValueObjectList GetBaseMoneyList()
         {
-            var moneyList = new MoneyList();
+            var moneyList = new ValueObjectList();
             moneyList.Add(new Money(10000, Currency.RUB));
             moneyList.Add(new Money(500, Currency.EUR));
             moneyList.Add(new Money(750, Currency.USD));

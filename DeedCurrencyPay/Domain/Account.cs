@@ -48,7 +48,7 @@ namespace DeedCurrencyPay.Domain
         public AccountInfo GetAccountInfo(ICurrencyService currencyService)
         {
             //var moneyList = new List<Money>();
-            var moneyList = new MoneyList();
+            var moneyList = new ValueObjectList();
 
             foreach (var targetCurrency in Currencies)
             {

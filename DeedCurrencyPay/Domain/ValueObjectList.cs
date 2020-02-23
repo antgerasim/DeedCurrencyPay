@@ -5,26 +5,33 @@ using System.Linq;
 
 namespace DeedCurrencyPay.Domain
 {
-    public sealed class MoneyList : IEnumerable<Money>, IEquatable<MoneyList>
+    public class ValueObjectList : ICollection<Money>, IEnumerable<Money>, IEquatable<ValueObjectList>
     {
         private readonly ICollection<Money> _Items;
         public int Count
         {
             get
             {
-                //lock (_Items)
                 {
                     return _Items.Count;
                 }
             }
         }
 
-        public MoneyList()
+        public bool IsReadOnly
+        {
+            get
+            {
+                return _Items.IsReadOnly;
+            }
+        }
+
+        public ValueObjectList()
         {
             _Items = new List<Money>();
         }
 
-        public MoneyList(IEnumerable<Money> collection)
+        public ValueObjectList(IEnumerable<Money> collection)
         {
             _Items = new List<Money>();
 
@@ -47,12 +54,11 @@ namespace DeedCurrencyPay.Domain
             _Items.Add(item);
         }
 
-        public void Remove(Money item)
+        bool ICollection<Money>.Remove(Money item)
         {
-            _Items.Remove(item);
+            return _Items.Remove(item);
         }
-
-        public MoneyList AddRange(IEnumerable<Money> collection)
+        public ValueObjectList AddRange(IEnumerable<Money> collection)
         {
             using (IEnumerator<Money> en = collection.GetEnumerator())
             {
@@ -61,8 +67,25 @@ namespace DeedCurrencyPay.Domain
                     _Items.Add(en.Current);
                 }
             }
-            return new MoneyList(_Items);
+            return new ValueObjectList(_Items);
         }
+
+        public void Clear()
+        {
+            _Items.Clear();
+        }
+
+        public bool Contains(Money item)
+        {
+            return _Items.Contains(item);
+        }
+
+        public void CopyTo(Money[] array, int arrayIndex)
+        {
+            _Items.CopyTo(array, arrayIndex);
+        }
+
+
 
         public IEnumerator<Money> GetEnumerator()
         {
@@ -81,12 +104,12 @@ namespace DeedCurrencyPay.Domain
                 return false;
             }
 
-            var list = obj as MoneyList;
+            var list = obj as ValueObjectList;
 
             return Equals(list);
         }
 
-        public bool Equals(MoneyList list)
+        public bool Equals(ValueObjectList list)
         {
             if (list.Count != this.Count)
                 return false;
@@ -108,7 +131,7 @@ namespace DeedCurrencyPay.Domain
         public override int GetHashCode()
         {
             int hc = 0;
-            if (_Items != null || _Items.Count ==0)
+            if (_Items != null || _Items.Count == 0)
                 foreach (var p in _Items)
                 {
                     hc ^= p.GetHashCode();
@@ -116,5 +139,7 @@ namespace DeedCurrencyPay.Domain
                 }
             return hc;
         }
+
+
     }
 }

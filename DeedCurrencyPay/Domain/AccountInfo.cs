@@ -8,14 +8,14 @@ namespace DeedCurrencyPay.Domain
     public class AccountInfo : ValueObject<AccountInfo>
     //public sealed class AccountInfo : ValueObjectMsd
     {
-        public AccountInfo(Money balance, MoneyList otherCurrencies)
+        public AccountInfo(Money balance, ValueObjectList otherCurrencies)
         {
             Balance = balance;            
             OtherCurrencies = otherCurrencies;
         }
 
         public Money Balance { get; }
-        public MoneyList OtherCurrencies { get; }
+        public ValueObjectList OtherCurrencies { get; }
 
         public override string ToString()
         {

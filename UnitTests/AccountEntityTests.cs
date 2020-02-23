@@ -1,27 +1,27 @@
 ﻿using DeedCurrencyPay.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using UnitTests.TestHelpers;
 
 namespace UnitTests
 {
     [TestClass]
-    public class AccountEntityTests : TestBase
+    public class AccountEntityTests : TestBase<Account>
     {
         [TestInitialize]
         public void Setup()
         {
-            TestBaseInitialize();
+            TestInitializeBase();
         }
 
         [TestMethod]
         public void Is_Account_ValueEqual()
         {
-            var dupeAccounts = base.dupeAccounts.ToList();            
-            Assert.IsFalse(UnitTestHelper<Account>.Can_Add_Duplicate_To_HashSet(dupeAccounts));
+            var uniqueAccounts = base.uniqueAccounts.ToList();
+            var dupeAccounts = base.dupeAccounts.ToList();
+
+            Assert.IsTrue(Can_Add_To_HashSet(uniqueAccounts));
+            Assert.IsFalse(Can_Add_To_HashSet(dupeAccounts));
         }
 
         #region Exception Test
@@ -29,7 +29,7 @@ namespace UnitTests
         [TestMethod]
         public void When_DepositAmount_Is_Less_Then_Zero_ArgumentOutOfRangeException()
         {
-            var negativeMoney = new Money(-1, Currency.RUB);            
+            var negativeMoney = new Money(-1, Currency.RUB);
             var igorAccount = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
 
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => igorAccount.Deposit(negativeMoney));
@@ -63,12 +63,12 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void When_WithdrawAmount_Is_Equal_Zero_ArgumentOutOfRangeException()
+        public void When_WithdrawAmount_Is_Equal_Zero_ArgumentException()
         {
             var zeroMoney = new Money(0, Currency.RUB);
             var igorAccount = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
 
-            Assert.ThrowsException<InvalidOperationException>(() => igorAccount.Withdraw(zeroMoney));
+            Assert.ThrowsException<ArgumentException>(() => igorAccount.Withdraw(zeroMoney));
         }
 
         [TestMethod]
@@ -79,36 +79,61 @@ namespace UnitTests
 
             Assert.ThrowsException<ArgumentException>(() => igorAccount.ConvertToCurrency(invalidCurrency, base.currencyService));
         }
-        #endregion
 
-        #region Logic 
+        #endregion Exception Test
+
+        #region Logic
+
+
         [TestMethod]
-        public void ConvertCurrency_WithValidCurrency()
+        public void ConvertCurrency_WithValidCurrency_Rub_100_To_Usd()
         {
-            var igorAccount = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var targetCurrency = Currency.USD;
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
 
-            var accountConvertedrubToUsdRslt = igorAccount.ConvertToCurrency(Currency.USD, base.currencyService);
-
-            Assert.IsNotNull(accountConvertedrubToUsdRslt);
-            Assert.IsInstanceOfType(accountConvertedrubToUsdRslt, typeof(Account));
-            Assert.IsTrue(accountConvertedrubToUsdRslt.Balance.Amount != 0);
-            Assert.IsTrue(accountConvertedrubToUsdRslt.Balance.SelectedCurrency == Currency.USD);
+            Assert_Currency_Convertion(targetCurrency, convertedAccount);
+            Assert.IsTrue(IsBetween(roundedResult, 1, 2));
         }
 
         [TestMethod]
-        public void GetAccountInfo_Test()
-        {/*
-            var currencyExgRateDict = new Dictionary<Currency, double>();
-            
-            var account = new Account(new Money(10000, Currency.RUB), 1000101, "Igor");
-            var accountExpected = new Account(new Money(159, Currency.USD), 1000101, "Igor");
+        public void ConvertCurrency_WithValidCurrency_Rub_15000_To_Eur()
+        {
+            var targetCurrency = Currency.EUR;
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Petr");
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
 
-            var accountActual = account.ConvertCurrency(Currency.USD);
+            Assert_Currency_Convertion(targetCurrency, convertedAccount);
+            Assert.IsTrue(IsBetween(roundedResult, 200, 250));
+        }
 
-            Assert.AreEqual(accountExpected, accountActual);
-            */
+
+        [TestMethod]
+        public void ConvertCurrency_WithValidCurrency_Idr_100_To_Rub()
+        {
+            var targetCurrency = Currency.RUB;
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Yulia");
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
+
+            Assert_Currency_Convertion(targetCurrency, convertedAccount);
+            Assert.IsTrue(IsBetween(roundedResult, 1.10m, 1.70m));
+        }
+
+        [TestMethod]
+        public void GetAccountInfo_100_Rub_Other_Currencies_Usd_Eur()
+        {
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var accountBalance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
+            var accountInfo = accountUnderTest.GetAccountInfo(base.currencyService);
+
+            Assert.AreEqual(accountInfo.Balance, accountBalance);
+            Assert.IsFalse(accountInfo.OtherCurrencies.Contains(accountInfo.Balance));
             //weiter mit hier
         }
-        #endregion
+
+        #endregion Logic
     }
 }

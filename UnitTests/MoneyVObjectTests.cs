@@ -1,33 +1,35 @@
 using DeedCurrencyPay.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using UnitTests.TestHelpers;
 
 namespace UnitTests
 {
     [TestClass]
-    public class MoneyVObjectTests : TestBase
+    public class MoneyVObjectTests : TestBase<Money>
     {
         [TestInitialize]
         public void Setup()
         {
-            TestBaseInitialize();
+            TestInitializeBase();
         }
 
         [TestMethod]
         public void Is_Money_ValueEqual()
         {
-            var dupeMoneyList = base.dupeMoneyList.ToList();
-            Assert.IsFalse(UnitTestHelper<Money>.Can_Add_Duplicate_To_HashSet(dupeMoneyList));
+            var uniqueMoneyList = base.uniqueMoneyColl.ToList();
+            var dupeMoneyList = base.dupeMoneyColl.ToList();
+
+           // Assert.IsFalse(Can_Add_To_HashSet_Test_Mess(new[] { 1,1,2,2,3,3}));
+
+            Assert.IsTrue(Can_Add_To_HashSet(uniqueMoneyList));
+            Assert.IsFalse(Can_Add_To_HashSet(dupeMoneyList));
         }
 
         [TestMethod]
         public void Is_Money_Immutable()
         {
-            Assert.IsTrue(UnitTestHelper<Money>.Is_Immutable(typeof(Money)));
+            Assert.IsTrue(TestBase<Money>.Is_Immutable(typeof(Money)));
         }
 
         #region Exception Test
@@ -40,6 +42,7 @@ namespace UnitTests
 
             Assert.ThrowsException<ArgumentException>(() => moneyA > moneyB);
         }
+
         [TestMethod]
         public void OperatorLessThen_When_Money_Currency_Not_Same_ArgumentException()
         {
@@ -48,6 +51,7 @@ namespace UnitTests
 
             Assert.ThrowsException<ArgumentException>(() => moneyA < moneyB);
         }
+
         [TestMethod]
         public void OperatorLessThenOrEquals_When_Money_Currency_Not_Same_ArgumentException()
         {
@@ -101,7 +105,8 @@ namespace UnitTests
 
             Assert.ThrowsException<ArgumentException>(() => moneyA * moneyB);
         }
-        #endregion
+
+        #endregion Exception Test
 
         #region Logic - Boolean operators
 
@@ -167,9 +172,11 @@ namespace UnitTests
             Assert.IsTrue(moneyC >= moneyA);
             Assert.IsTrue(moneyA == moneyB);
         }
-        #endregion
+
+        #endregion Logic - Boolean operators
 
         #region Logic Arithmetic  operators
+
         [TestMethod]
         public void OperatorAddition_Logic()
         {
@@ -242,7 +249,6 @@ namespace UnitTests
             Assert.AreEqual(expectedNeg, actualNeg);
         }
 
-
-        #endregion
+        #endregion Logic Arithmetic  operators
     }
 }

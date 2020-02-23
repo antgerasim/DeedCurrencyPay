@@ -35,10 +35,12 @@ namespace DeedCurrencyPay.Domain
 
         public override int GetHashCode()
         {
+            return 0;
+            /*
             unchecked
             {
                 return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ Index.GetHashCode();
-            }
+            }*/
         }
 
         public static bool operator ==(Currency a, Currency b)
@@ -53,7 +55,7 @@ namespace DeedCurrencyPay.Domain
 
         public override string ToString()
         {
-            return $"{Name} {Index}";
+            return $"{Name}";
         }
 
         public static Currency Parse(string currString)
@@ -76,5 +78,6 @@ namespace DeedCurrencyPay.Domain
             }
             return Currency.NONE;
         }
+       
     }
 }

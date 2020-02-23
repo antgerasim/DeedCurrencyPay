@@ -1,37 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DeedCurrencyPay.Domain
 {
-    public sealed class AccountInfo//valueobject mode
+    public class AccountInfo : ValueObject<AccountInfo>
+    //public sealed class AccountInfo : ValueObjectMsd
     {
-        private readonly Money _Balance;
-        private readonly IEnumerable<Money> _MoneyListOtherCurrencies;
-
-        public AccountInfo(Money balance, IEnumerable<Money> moneyList)
+        public AccountInfo(Money balance, MoneyList otherCurrencies)
         {
-            this._Balance = balance;
-
-            this._MoneyListOtherCurrencies = moneyList;
+            Balance = balance;            
+            OtherCurrencies = otherCurrencies;
         }
 
-        public override string ToString()
-        { 
-            var sb = new StringBuilder($"Основной баланс кошелька: {this._Balance.ToString() }.@");
-        
-            sb.Append($"Баланс кошелька в других валютах:@");
+        public Money Balance { get; }
+        public MoneyList OtherCurrencies { get; }
 
-            foreach (var money in _MoneyListOtherCurrencies)
+        public override string ToString()
+        {
+            var sb = new StringBuilder($"Основной баланс кошелька: {this.Balance.ToString()}.");
+            sb.Append($" Баланс кошелька в других валютах:");
+            var array = OtherCurrencies.ToArray();
+
+            for (int i = 0; i < array.Length; i++)
             {
-                if (money.SelectedCurrency == _Balance.SelectedCurrency)//не ковертируем в одинаковые валюты - перенести проверку в аккаунт
+                var money = array[i];
+                if (money.SelectedCurrency == Balance.SelectedCurrency)//не ковертируем в одинаковые валюты - перенести проверку в аккаунт
                 {
                     continue;
                 }
-                sb.Append($"{money.ToString()}@");
-            }
 
-            return sb.ToString().Replace("@", Environment.NewLine);
+                if (i != array.Length - 1)
+                {
+                    sb.Append($" {money.ToString()},");
+                }
+                else
+                {
+                    sb.Append($" {money.ToString()}.");
+                }
+            }
+            return sb.ToString();
+        }
+
+        private IList<Money> DuplicateCurrencyPolicy(Money balance, IEnumerable<Money> otherCurrencies)
+        {
+            return otherCurrencies.Where(curr => curr.SelectedCurrency != balance.SelectedCurrency).ToList();
         }
     }
 }

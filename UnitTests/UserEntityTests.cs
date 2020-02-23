@@ -1,24 +1,26 @@
 ﻿using DeedCurrencyPay.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using UnitTests.TestHelpers;
 
 namespace UnitTests
 {
     [TestClass]
-    public class UserEntityTests : TestBase
+    public class UserEntityTests : TestBase<User>
     {
         [TestInitialize]
         public void Setup()
         {
-            TestBaseInitialize();
+            TestInitializeBase();
         }
 
         [TestMethod]
         public void Is_User_ValueEqual()
         {
+            var uniqueUsers = base.uniqueUsers.ToList();
             var dupeUsers = base.dupeUsers.ToList();
-            Assert.IsFalse(UnitTestHelper<User>.Can_Add_Duplicate_To_HashSet(dupeUsers));
+
+            Assert.IsTrue(Can_Add_To_HashSet(uniqueUsers));
+            Assert.IsFalse(Can_Add_To_HashSet(dupeUsers));
         }
     }
 }

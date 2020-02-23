@@ -27,8 +27,9 @@ namespace DeedCurrencyPay.Helpers
         private static IEnumerable<Account> GetBaseAccounts()
         {
             var accountList = new List<Account>();
-            accountList.Add(new Account(new Money(100, Currency.RUB), 1000101, "Igor", defaultThreeAccountCurrencies));
-            accountList.Add(new Account(new Money(300, Currency.IDR), 1000102, "Yulia", defaultOneAccountCurrency));
+            accountList.Add(new Account(1000101, new Money(100, Currency.RUB), "Igor", defaultThreeAccountCurrencies));
+            accountList.Add(new Account(1000102, new Money(15000, Currency.RUB), "Petr", defaultThreeAccountCurrencies));
+            accountList.Add(new Account(1000103, new Money(300, Currency.IDR), "Yulia", defaultOneAccountCurrency));
             return accountList;
         }
     }

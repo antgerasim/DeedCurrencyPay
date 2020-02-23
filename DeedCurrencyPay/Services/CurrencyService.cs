@@ -17,13 +17,14 @@ namespace DeedCurrencyPay.Services
             ApiRoute = @"http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
         }
 
-        public ConversionAmount GetConversionAmount(Currency fromCurr, Currency toCurr, decimal amount)
+        public ConversionExchangeRate GetConversionExchangeRate(Currency fromCurr, Currency toCurr)
         {
-            var cExchangeRateRslt = GetConversionExchangeRate(fromCurr, toCurr, amount);
-            return new ConversionAmount(fromCurr, toCurr, cExchangeRateRslt.ExchangeRateValue);
+            var cExchangeRateRslt = GetConversionAmount(fromCurr, toCurr, 1);
+
+            return new ConversionExchangeRate(fromCurr, toCurr, cExchangeRateRslt.ConvertedAmountValue);
         }
 
-        public ConversionExchangeRate GetConversionExchangeRate(Currency fromCurr, Currency toCurr, decimal amount = 1)
+        public ConversionAmount GetConversionAmount(Currency fromCurr, Currency toCurr, decimal amount)
         {
             if (fromCurr == LeadCurrency && toCurr == LeadCurrency)
             {
@@ -39,22 +40,22 @@ namespace DeedCurrencyPay.Services
                 {
                     toRate = GetCurrencyRateInEuro(toCurr);
                     rsltRate = (amount * toRate);
-                    return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
+                    return new ConversionAmount(fromCurr, toCurr, rsltRate);
                 }
                 if (toCurr == LeadCurrency)
                 {
                     fromRate = GetCurrencyRateInEuro(fromCurr);
                     rsltRate = (amount / fromRate);
-                    return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
+                    return new ConversionAmount(fromCurr, toCurr, rsltRate);
                 }
                 toRate = GetCurrencyRateInEuro(toCurr) / 1;
                 fromRate = GetCurrencyRateInEuro(fromCurr) / 1;
                 rsltRate = (amount * toRate) / fromRate;
-                return new ConversionExchangeRate(fromCurr, toCurr, rsltRate);
+                return new ConversionAmount(fromCurr, toCurr, rsltRate);
             }
             catch
             {
-                return default(ConversionExchangeRate);
+                return default(ConversionAmount);
             }
         }
 
@@ -80,7 +81,8 @@ namespace DeedCurrencyPay.Services
                         if (nodeCurr == targetCurr.Name)
                         {
                             return Decimal.Parse(node.Attributes["rate"].Value, NumberStyles.Any, new CultureInfo("en-Us"));
-                        } }
+                        }
+                    }
                 }
                 return default(decimal);
             }

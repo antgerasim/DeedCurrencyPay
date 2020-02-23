@@ -1,23 +1,23 @@
 ﻿using DeedCurrencyPay.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DeedCurrencyPay.Domain
 {
     public class Account : Entity<Account>
     {
-        public Account(Money balance, long id, string userName, IEnumerable<Currency> currencies)
+        public Account(long id, Money balance,  string userName, IEnumerable<Currency> currencies)
         {
-            Balance = balance;
             base.Id = id;
+            Balance = balance;            
             UserName = userName;
             Currencies = currencies;
         }
 
         public Money Balance { get; private set; }
         public IEnumerable<Currency> Currencies { get; private set; }
-        //для усиления идентичности (Equals, GetHashCode) дублируем имя из User
-        public string UserName { get; private set; }
+        public string UserName { get; private set; } //для усиления идентичности (Equals, GetHashCode) дублируем имя из User
 
         public Account ConvertToCurrency(Currency toCurrency, ICurrencyService currencyService)
         {
@@ -32,7 +32,8 @@ namespace DeedCurrencyPay.Domain
 
         public void Deposit(Money money)
         {
-            if (money.Amount < 0) {
+            if (money.Amount < 0)
+            {
                 throw new ArgumentOutOfRangeException("Пополнение невозможно. Значение не может быть ниже нуля.");
             }
             if (money.Amount == 0)
@@ -46,7 +47,9 @@ namespace DeedCurrencyPay.Domain
         // Передумать механизм, если после конвертации меняется текущий баланс кошелька!
         public AccountInfo GetAccountInfo(ICurrencyService currencyService)
         {
-            var moneyList = new List<Money>();
+            //var moneyList = new List<Money>();
+            var moneyList = new MoneyList();
+
             foreach (var targetCurrency in Currencies)
             {
                 if (targetCurrency == Balance.SelectedCurrency)
@@ -54,8 +57,12 @@ namespace DeedCurrencyPay.Domain
                     continue;
                 }
 
-                var account = this.ConvertToCurrency(targetCurrency, currencyService);
-                moneyList.Add(new Money(account.Balance.Amount, account.Balance.SelectedCurrency));
+                //var account = this.ConvertToCurrency(targetCurrency, currencyService);
+                var convResult = currencyService.GetConversionAmount(Balance.SelectedCurrency, targetCurrency, Balance.Amount);
+
+                //moneyList.Add(new Money(account.Balance.Amount, account.Balance.SelectedCurrency));
+                moneyList.Add(new Money(convResult.ConvertedAmountValue, convResult.CurrencyTo));
+
             }
             var retVal = new AccountInfo(this.Balance, moneyList);
             return retVal;
@@ -73,7 +80,7 @@ namespace DeedCurrencyPay.Domain
             }
             if (money.Amount == 0)
             {
-                throw new InvalidOperationException("Для снятия денежных средств укажите суммму выше нуля.");
+                throw new ArgumentException("Для снятия денежных средств укажите суммму выше нуля.");
             }
             Balance -= money;
         }
@@ -82,5 +89,15 @@ namespace DeedCurrencyPay.Domain
         {
             return $"{base.Id} {UserName} {Balance}";
         }
+
+        private bool SelectedCurrencyCollisionPolicy(IEnumerable<Currency> currencies)
+        {
+            if (currencies.Contains(Balance.SelectedCurrency))
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }

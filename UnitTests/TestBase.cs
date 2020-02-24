@@ -42,7 +42,7 @@ namespace UnitTests
             uniqueAccountInfoColl = AccountInfoInit.GetAccountInfoList();
             dupeAccountInfoColl = AccountInfoInit.GetAccountInfosWithDuplicate();
 
-            uniqueMoneyColl = MoneyInit.GetMoneyList();
+            uniqueMoneyColl = MoneyInit.GetMoneyCollection();
             dupeMoneyColl = MoneyInit.GetMoneyListWithDuplicates();
             basicTestMoneyArray = MoneyInit.GetOperatorTestMoney().ToArray();
         }

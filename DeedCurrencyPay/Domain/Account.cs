@@ -7,10 +7,10 @@ namespace DeedCurrencyPay.Domain
 {
     public class Account : Entity<Account>
     {
-        public Account(long id, Money balance,  string userName, IEnumerable<Currency> currencies)
+        public Account(long id, Money balance, string userName, IEnumerable<Currency> currencies)
         {
             base.Id = id;
-            Balance = balance;            
+            Balance = balance;
             UserName = userName;
             Currencies = currencies;
         }
@@ -43,12 +43,10 @@ namespace DeedCurrencyPay.Domain
             Balance += money;
         }
 
-        // 3.d. Получить состояние своего кошелька (сумму денег в каждой из валют).
-        // Передумать механизм, если после конвертации меняется текущий баланс кошелька!
         public AccountInfo GetAccountInfo(ICurrencyService currencyService)
         {
-            //var moneyList = new List<Money>();
-            var moneyList = new ValueObjectList();
+
+            var moneyList = new ValueObjectCollection<Money>();
 
             foreach (var targetCurrency in Currencies)
             {
@@ -56,11 +54,8 @@ namespace DeedCurrencyPay.Domain
                 {
                     continue;
                 }
-
-                //var account = this.ConvertToCurrency(targetCurrency, currencyService);
                 var convResult = currencyService.GetConversionAmount(Balance.SelectedCurrency, targetCurrency, Balance.Amount);
 
-                //moneyList.Add(new Money(account.Balance.Amount, account.Balance.SelectedCurrency));
                 moneyList.Add(new Money(convResult.ConvertedAmountValue, convResult.CurrencyTo));
 
             }

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace DeedCurrencyPay.Domain
 {
-    public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
+    public abstract class ValueObject<T> : IEquatable<T>, IValueObject<T> where T : ValueObject<T>
     {
         public static bool operator !=(ValueObject<T> x, ValueObject<T> y)
         {

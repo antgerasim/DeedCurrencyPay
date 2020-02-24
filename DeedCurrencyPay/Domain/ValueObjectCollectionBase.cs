@@ -4,7 +4,8 @@ using System.Linq;
 
 namespace DeedCurrencyPay.Domain
 {
-    public abstract class ValueObjectCollectionBase<T> : IEquatable<ValueObjectCollection<T>> where T : ValueObject<T>
+    public abstract class ValueObjectCollectionBase<T> : IEquatable<ValueObjectCollection<T>>
+        where T : IValueObject<T>
     {
         protected readonly ICollection<T> _Items;
 
@@ -65,7 +66,7 @@ namespace DeedCurrencyPay.Domain
             if (_Items != null)
                 foreach (var item in _Items)
                 {
-                    hc ^= item.GetHashCode();                  
+                    hc ^= item.GetHashCode();
                 }
             return hc;
         }

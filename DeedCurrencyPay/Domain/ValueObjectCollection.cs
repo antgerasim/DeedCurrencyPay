@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace DeedCurrencyPay.Domain
 {
     public class ValueObjectCollection<T> : ValueObjectCollectionBase<T>, ICollection<T>//, IEnumerable<T>
-        where T : ValueObject<T>
+        where T : IValueObject<T>
     {
         public bool IsReadOnly => base._Items.IsReadOnly;
 

@@ -45,6 +45,7 @@ namespace DeedCurrencyPay.Domain
         {
             if (list.Count != this.Count)
                 return false;
+
             bool same = true;
 
             foreach (var item in list)
@@ -62,10 +63,9 @@ namespace DeedCurrencyPay.Domain
         {
             int hc = 0;
             if (_Items != null)
-                foreach (var p in _Items)
+                foreach (var item in _Items)
                 {
-                    hc ^= p.GetHashCode();
-                    hc = (hc << 7) | (hc >> (32 - 7));
+                    hc ^= item.GetHashCode();                  
                 }
             return hc;
         }

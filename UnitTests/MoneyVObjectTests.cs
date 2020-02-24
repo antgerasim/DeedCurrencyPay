@@ -20,8 +20,6 @@ namespace UnitTests
             var uniqueMoneyList = base.uniqueMoneyColl.ToList();
             var dupeMoneyList = base.dupeMoneyColl.ToList();
 
-           // Assert.IsFalse(Can_Add_To_HashSet_Test_Mess(new[] { 1,1,2,2,3,3}));
-
             Assert.IsTrue(Can_Add_To_HashSet(uniqueMoneyList));
             Assert.IsFalse(Can_Add_To_HashSet(dupeMoneyList));
         }

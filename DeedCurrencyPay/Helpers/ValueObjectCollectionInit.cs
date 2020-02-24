@@ -1,4 +1,5 @@
 ﻿using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Domain.Common;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,21 +7,21 @@ namespace DeedCurrencyPay.Helpers
 {
     public class ValueObjectCollectionInit
     {
-        public static IEnumerable<ValueObjectCollection<Money>> GetValueObjectCollectionList()
+        public static IEnumerable<IValueObjectCollection<Money>> GetValueObjectCollectionList()
         {
             return GetBaseValueObjectCollectionList();
         }
 
-        public static IEnumerable<ValueObjectCollection<Money>> GetValueObjectCollectionListWithDuplicates()
+        public static IEnumerable<IValueObjectCollection<Money>> GetValueObjectCollectionListWithDuplicates()
         {
             return GetBaseValueObjectCollectionList()
                 .Concat(GetBaseValueObjectCollectionList());
         }
 
-        private static IEnumerable<ValueObjectCollection<Money>> GetBaseValueObjectCollectionList()
+        private static IEnumerable<IValueObjectCollection<Money>> GetBaseValueObjectCollectionList()
         {
             return
-                new List<ValueObjectCollection<Money>> {
+                new List<IValueObjectCollection<Money>> {
                     MoneyListInit.GetMoneyList1(),
                     MoneyListInit.GetMoneyList2(),
             };

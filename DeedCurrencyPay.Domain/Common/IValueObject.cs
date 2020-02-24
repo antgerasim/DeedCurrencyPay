@@ -1,4 +1,4 @@
-﻿namespace DeedCurrencyPay.Domain
+﻿namespace DeedCurrencyPay.Domain.Common
 {
     public interface IValueObject<T> where T : IValueObject<T>
     {

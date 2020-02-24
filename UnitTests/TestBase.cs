@@ -8,6 +8,7 @@ using System.Text;
 using DeedCurrencyPay.Helpers;
 using System.Linq;
 using System.Reflection;
+using DeedCurrencyPay.Domain.Common;
 
 namespace UnitTests
 {
@@ -26,8 +27,8 @@ namespace UnitTests
         protected IEnumerable<Money> uniqueMoneyColl;
         protected IEnumerable<Money> dupeMoneyColl;
         protected IEnumerable<Money> basicTestMoneyList;
-        protected IEnumerable<ValueObjectCollection<Money>> uniqueVOCollections;
-        protected IEnumerable<ValueObjectCollection<Money>> dupeVOCollections;        
+        protected IEnumerable<IValueObjectCollection<Money>> uniqueVOCollections;
+        protected IEnumerable<IValueObjectCollection<Money>> dupeVOCollections;        
 
         protected void TestInitializeBase()
         {
@@ -52,7 +53,7 @@ namespace UnitTests
             dupeVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionListWithDuplicates();
         }
 
-        protected static bool Can_Add_To_HashSet(IList<T> list)
+        protected static bool Can_Add_To_HashSet(IEnumerable<T> list)
         {
             HashSet<T> hashSet = new HashSet<T>();
             var array = list.ToArray();
@@ -69,6 +70,24 @@ namespace UnitTests
             }
             return hashsetAddResult;
         }
+
+     /*  protected static bool Can_Add_To_HashSet(IEnumerable<T> list)
+        {
+            HashSet<T> hashSet = new HashSet<T>();
+            var array = list.ToArray();
+
+            var hashsetAddResult = true;
+            for (int i = 0; i < array.Length; i++)
+            {
+                var item = array[i];
+                hashsetAddResult = hashSet.Add(item);
+                if (!hashsetAddResult)
+                {
+                    break;
+                }
+            }
+            return hashsetAddResult;
+        }*/
 
         protected static bool Is_Immutable(Type type)
         {

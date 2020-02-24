@@ -1,21 +1,22 @@
 ﻿using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Domain.Common;
 using System.Collections.Generic;
 
 namespace DeedCurrencyPay.Helpers
 {
     public static class MoneyListInit
     {
-        public static ValueObjectCollection<Money> GetMoneyList1()
+        public static IValueObjectCollection<Money> GetMoneyList1()
         {
             return GetBaseMoneyList1();
         }
 
-        public static ValueObjectCollection<Money> GetMoneyList2()
+        public static IValueObjectCollection<Money> GetMoneyList2()
         {
             return GetBaseMoneyList2();
         }
 
-        public static ValueObjectCollection<Money> GetMoneyListWithDuplicates()
+        public static IValueObjectCollection<Money> GetMoneyListWithDuplicates()
         {
             return GetBaseMoneyList1().AddRange(GetBaseMoneyList1());
         }
@@ -29,7 +30,7 @@ namespace DeedCurrencyPay.Helpers
             };
         }
 
-        private static ValueObjectCollection<Money> GetBaseMoneyList1()
+        private static IValueObjectCollection<Money> GetBaseMoneyList1()
         {
             return new ValueObjectCollection<Money>
             {
@@ -43,7 +44,7 @@ namespace DeedCurrencyPay.Helpers
                 new Money(30500500, Currency.IDR)
             };
         }
-        private static ValueObjectCollection<Money> GetBaseMoneyList2()
+        private static IValueObjectCollection<Money> GetBaseMoneyList2()
         {
             return new ValueObjectCollection<Money>
             {

@@ -1,6 +1,8 @@
-﻿namespace DeedCurrencyPay.Domain
+﻿using DeedCurrencyPay.Domain.Common;
+
+namespace DeedCurrencyPay.Domain
 {
-    public abstract class Entity<T> where T : Entity<T>
+    public abstract class Entity<T> : IEntity<T> where T : IEntity<T>
     {
         public virtual long Id { get; protected set; }
 

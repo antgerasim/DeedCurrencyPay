@@ -1,11 +1,14 @@
 ﻿using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Domain.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace UnitTests
 {
     [TestClass]
-   public class GenericVObjectCollectionTests : TestBase<ValueObjectCollection<Money>>
+   public class GenericVObjectCollectionTests : TestBase<IValueObjectCollection<Money>> 
     {
         [TestInitialize]
         public void Setup()
@@ -15,12 +18,9 @@ namespace UnitTests
 
         [TestMethod]
         public void Is_GenericVObjectCollection_ValueEqual()
-        {
-            var uniqueVOCollectionObj = base.uniqueVOCollections.ToList();
-            var dupeVOCollectionObj = base.dupeVOCollections.ToList(); 
-
-            Assert.IsTrue(Can_Add_To_HashSet(uniqueVOCollectionObj));
-            Assert.IsFalse(Can_Add_To_HashSet(dupeVOCollectionObj));
+        {  
+            Assert.IsTrue(Can_Add_To_HashSet(uniqueVOCollections));
+            Assert.IsFalse(Can_Add_To_HashSet(dupeVOCollections));
         }
 
         [TestMethod]
@@ -28,6 +28,5 @@ namespace UnitTests
         {
             Assert.IsTrue(TestBase<ValueObjectCollection<Money>>.Is_Immutable(typeof(ValueObjectCollection<Money>)));
         }
-
     }
 }

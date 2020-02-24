@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeedCurrencyPay", "DeedCurr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{B489C55E-BD53-418F-A14E-256C028A817A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeedCurrencyPay.Data", "DeedCurrencyPay.Infrastructure\DeedCurrencyPay.Data.csproj", "{8A0F6136-32EC-4B92-9F4E-FC8EA68D21A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeedCurrencyPay.Infrastructure", "DeedCurrencyPay.Infrastructure\DeedCurrencyPay.Infrastructure.csproj", "{8A0F6136-32EC-4B92-9F4E-FC8EA68D21A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeedCurrencyPay.Domain", "DeedCurrencyPay.Domain\DeedCurrencyPay.Domain.csproj", "{01DE153A-31A3-488A-B24E-29FCBC225801}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeedCurrencyPay.Domain", "DeedCurrencyPay.Domain\DeedCurrencyPay.Domain.csproj", "{01DE153A-31A3-488A-B24E-29FCBC225801}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

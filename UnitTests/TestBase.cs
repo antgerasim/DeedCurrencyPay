@@ -1,21 +1,23 @@
 ﻿using DeedCurrencyPay.Domain;
-using DeedCurrencyPay.Services;
-using DeedCurrencyPay.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using DeedCurrencyPay.Helpers;
 using System.Linq;
 using System.Reflection;
 using DeedCurrencyPay.Domain.Common;
+using DeedCurrencyPay.Infrastructure.Helpers;
+using DeedCurrencyPay.API.Services;
+using DeedCurrencyPay.Domain.UserAggregate;
+using DeedCurrencyPay.Infrastructure.Repositories;
 
 namespace UnitTests
 {
 
     public abstract class TestBase<T>
     {
+        protected IUserRepository userRepository;
         protected ICurrencyService currencyService;
+        protected IAccountService accountService;
         protected IEnumerable<Currency> defaultThreeAccountCurrencies;
         protected IEnumerable<Currency> defaultOneAccountCurrency;
         protected IEnumerable<User> uniqueUsers;
@@ -32,7 +34,10 @@ namespace UnitTests
 
         protected void TestInitializeBase()
         {
+            userRepository = new UserRepository();
             currencyService = new CurrencyService();
+            accountService = new AccountService(userRepository, currencyService);
+
             defaultThreeAccountCurrencies = new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR };
             defaultOneAccountCurrency = new List<Currency> { Currency.IDR };
 
@@ -70,24 +75,6 @@ namespace UnitTests
             }
             return hashsetAddResult;
         }
-
-     /*  protected static bool Can_Add_To_HashSet(IEnumerable<T> list)
-        {
-            HashSet<T> hashSet = new HashSet<T>();
-            var array = list.ToArray();
-
-            var hashsetAddResult = true;
-            for (int i = 0; i < array.Length; i++)
-            {
-                var item = array[i];
-                hashsetAddResult = hashSet.Add(item);
-                if (!hashsetAddResult)
-                {
-                    break;
-                }
-            }
-            return hashsetAddResult;
-        }*/
 
         protected static bool Is_Immutable(Type type)
         {

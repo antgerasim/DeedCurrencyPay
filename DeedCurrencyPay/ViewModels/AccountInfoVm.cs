@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DeedCurrencyPay.ViewModels
+namespace DeedCurrencyPay.API.ViewModels
 {
     public class ResponseVm
     {

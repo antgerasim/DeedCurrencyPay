@@ -1,6 +1,6 @@
-﻿using DeedCurrencyPay.ViewModels;
+﻿using DeedCurrencyPay.API.ViewModels;
 
-namespace DeedCurrencyPay.Services
+namespace DeedCurrencyPay.API.Services
 {
     public interface IAccountService
     {

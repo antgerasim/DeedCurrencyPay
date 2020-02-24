@@ -1,5 +1,6 @@
-﻿using DeedCurrencyPay.Domain;
-using DeedCurrencyPay.Services;
+﻿using DeedCurrencyPay.API.Services;
+using DeedCurrencyPay.Domain;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 

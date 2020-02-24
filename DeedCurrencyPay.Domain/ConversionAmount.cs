@@ -1,4 +1,6 @@
-﻿namespace DeedCurrencyPay.Domain
+﻿using DeedCurrencyPay.Domain.Common;
+
+namespace DeedCurrencyPay.Domain
 {
     public sealed class ConversionAmount : ValueObject<ConversionAmount>
     {
@@ -12,17 +14,7 @@
             CurrencyTo = currencyTo;
             ConvertedAmountValue = convertedAmount;
         }
-        /*
-        protected override bool EqualsCore(ConversionAmount other)
-        {
-            return other != null && this.ConvertedAmountValue == other.ConvertedAmountValue && this.CurrencyFrom == other.CurrencyFrom && this.CurrencyTo == other.CurrencyTo;
-        }
 
-        protected override int GetHashCodeCore()
-        {
-            return this.ConvertedAmountValue.GetHashCode() ^ this.CurrencyFrom.GetHashCode() ^ this.CurrencyTo.GetHashCode();
-        }
-        */
         public override string ToString()
         {
             return $"{this.ConvertedAmountValue} {CurrencyTo}";

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DeedCurrencyPay.Services;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
+using DeedCurrencyPay.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DeedCurrencyPay.Controllers.V1
+namespace DeedCurrencyPay.API.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiController]

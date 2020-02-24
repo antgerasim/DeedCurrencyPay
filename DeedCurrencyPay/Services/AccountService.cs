@@ -1,24 +1,31 @@
-﻿using DeedCurrencyPay.Domain;
-using DeedCurrencyPay.Helpers;
-using DeedCurrencyPay.Repositories;
-using DeedCurrencyPay.ViewModels;
+﻿using DeedCurrencyPay.API.ViewModels;
+using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Domain.Common;
+using DeedCurrencyPay.Domain.UserAggregate;
+using System;
 
-namespace DeedCurrencyPay.Services
+namespace DeedCurrencyPay.API.Services
 {
-    internal class AccountService : IAccountService
+    public class AccountService : IAccountService
     {
         private readonly ICurrencyService currencyService;
         private readonly IUserRepository userRepository;
         public AccountService(IUserRepository userRepository, ICurrencyService currencyService)
         {
-            this.userRepository = userRepository;
-            this.currencyService = currencyService;
+            this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this.currencyService = currencyService ?? throw new ArgumentNullException(nameof(currencyService)); ;
         }
 
         public ResponseVm ConvertToCurrency(int userId, string targetCurrency)
         {
             var user = userRepository.GetById(userId);
-            var account = user.Account.ConvertToCurrency(Currency.Parse(targetCurrency.ToUpper()), currencyService);
+
+            if (targetCurrency == user.Account.Balance.SelectedCurrency.ToString())
+            {
+                throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
+            }
+            var conversionAmount = currencyService.GetConversionAmount(user.Account.Balance.SelectedCurrency, Currency.Parse(targetCurrency), user.Account.Balance.Amount);
+            var account = user.Account.ConvertToCurrency(Currency.Parse(targetCurrency.ToUpper()), conversionAmount);
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, account.ToString());
         }
@@ -35,7 +42,7 @@ namespace DeedCurrencyPay.Services
         public ResponseVm GetAccountInfo(int userId)
         {
             var user = userRepository.GetById(userId);
-            var accountInfo = user.Account.GetAccountInfo(currencyService);
+            var accountInfo = user.Account.GetAccountInfo(GetConvertedMoneyCollection(user.Account));
             var responseMsg = $"{accountInfo.ToString()}.";
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
@@ -48,6 +55,22 @@ namespace DeedCurrencyPay.Services
             var responseMsg = $"Снятие наличных. Баланс {user.Account.Balance.ToString()}.";
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
+        }
+
+        private IValueObjectCollection<Money> GetConvertedMoneyCollection(Account account)
+        {
+            var moneyCollection = new ValueObjectCollection<Money>();
+            foreach (var targetCurrency in account.Currencies)
+            {
+                //ToDo Domain Policy Validation Pattern
+                if (targetCurrency == account.Balance.SelectedCurrency)
+                {
+                    continue;
+                }
+                var conversionResult = currencyService.GetConversionAmount(account.Balance.SelectedCurrency, targetCurrency, account.Balance.Amount);
+                moneyCollection.Add(new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo));
+            }
+            return moneyCollection;
         }
 
         private ResponseVm CreateResponseVm(decimal accountBalance, Currency accountCurrency, string message)

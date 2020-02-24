@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DeedCurrencyPay\DeedCurrencyPay.csproj" />
+    <ProjectReference Include="..\DeedCurrencyPay.Domain\DeedCurrencyPay.Domain.csproj" />
+    <ProjectReference Include="..\DeedCurrencyPay\DeedCurrencyPay.API.csproj" />
   </ItemGroup>
 
 </Project>

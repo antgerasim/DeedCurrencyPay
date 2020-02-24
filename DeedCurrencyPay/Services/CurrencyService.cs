@@ -1,10 +1,9 @@
 ﻿using DeedCurrencyPay.Domain;
-using DeedCurrencyPay.Helpers;
 using System;
 using System.Globalization;
 using System.Xml;
 
-namespace DeedCurrencyPay.Services
+namespace DeedCurrencyPay.API.Services
 {
     public class CurrencyService : ICurrencyService
     {

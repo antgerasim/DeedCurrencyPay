@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DeedCurrencyPay.Domain
+namespace DeedCurrencyPay.Domain.Common
 {
     public class ValueObjectCollection<TValueobject> : IValueObjectCollection<TValueobject>
         where TValueobject : IValueObject<TValueobject>

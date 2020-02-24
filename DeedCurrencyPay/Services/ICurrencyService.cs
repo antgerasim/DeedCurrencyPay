@@ -1,6 +1,6 @@
 ﻿using DeedCurrencyPay.Domain;
 
-namespace DeedCurrencyPay.Services
+namespace DeedCurrencyPay.API.Services
 {
     public interface ICurrencyService
     {

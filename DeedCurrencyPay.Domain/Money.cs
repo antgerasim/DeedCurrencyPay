@@ -1,4 +1,4 @@
-﻿using DeedCurrencyPay.Helpers;
+﻿using DeedCurrencyPay.Domain.Common;
 using System;
 
 namespace DeedCurrencyPay.Domain

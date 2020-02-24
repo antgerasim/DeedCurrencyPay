@@ -1,4 +1,5 @@
 ﻿using DeedCurrencyPay.Domain;
+using DeedCurrencyPay.Domain.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -74,10 +75,10 @@ namespace UnitTests
         [TestMethod]
         public void When_ConvertCurrency_WithInvalidEqualFromAndToCurrency_ArgumentException()
         {
-            var igorAccount = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
             var invalidCurrency = Currency.RUB;
-
-            Assert.ThrowsException<ArgumentException>(() => igorAccount.ConvertToCurrency(invalidCurrency, base.currencyService));
+            var conversionAmount = currencyService.GetConversionAmount(accountUnderTest.Balance.SelectedCurrency, invalidCurrency, accountUnderTest.Balance.Amount);
+            Assert.ThrowsException<ArgumentException>(() => accountUnderTest.ConvertToCurrency(invalidCurrency, conversionAmount));
         }
 
         #endregion Exception Test
@@ -90,7 +91,8 @@ namespace UnitTests
         {
             var targetCurrency = Currency.USD;
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
-            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var conversionAmount = currencyService.GetConversionAmount(accountUnderTest.Balance.SelectedCurrency, targetCurrency, accountUnderTest.Balance.Amount);
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, conversionAmount);
             var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
 
             Assert_Currency_Convertion(targetCurrency, convertedAccount);
@@ -102,7 +104,8 @@ namespace UnitTests
         {
             var targetCurrency = Currency.EUR;
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Petr");
-            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var conversionAmount = currencyService.GetConversionAmount(accountUnderTest.Balance.SelectedCurrency, targetCurrency, accountUnderTest.Balance.Amount);
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, conversionAmount);
             var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
 
             Assert_Currency_Convertion(targetCurrency, convertedAccount);
@@ -115,7 +118,8 @@ namespace UnitTests
         {
             var targetCurrency = Currency.RUB;
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Yulia");
-            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, base.currencyService);
+            var conversionAmount = currencyService.GetConversionAmount(accountUnderTest.Balance.SelectedCurrency, targetCurrency, accountUnderTest.Balance.Amount);
+            var convertedAccount = accountUnderTest.ConvertToCurrency(targetCurrency, conversionAmount);
             var roundedResult = Math.Round(convertedAccount.Balance.Amount, 2, MidpointRounding.AwayFromZero);
 
             Assert_Currency_Convertion(targetCurrency, convertedAccount);
@@ -127,12 +131,28 @@ namespace UnitTests
         {
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
             var accountBalance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
-            var accountInfo = accountUnderTest.GetAccountInfo(base.currencyService);
+                       
+            var accountInfo = accountUnderTest.GetAccountInfo(GetConvertedMoneyCollection(accountUnderTest));
 
             Assert.AreEqual(accountInfo.Balance, accountBalance);
-            Assert.IsFalse(accountInfo.OtherCurrencies.Contains(accountInfo.Balance));
-            //weiter mit hier
+            Assert.IsFalse(accountInfo.OtherCurrencies.Contains(accountInfo.Balance));            
         }
+
+        private IValueObjectCollection<Money> GetConvertedMoneyCollection(Account account)
+        {
+            var moneyCollection = new ValueObjectCollection<Money>();
+            foreach (var targetCurrency in account.Currencies)
+            {
+                if (targetCurrency == account.Balance.SelectedCurrency)
+                {
+                    continue;
+                }
+                var conversionResult = currencyService.GetConversionAmount(account.Balance.SelectedCurrency, targetCurrency, account.Balance.Amount);
+                moneyCollection.Add(new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo));
+            }
+            return moneyCollection;
+        }
+
 
         #endregion Logic
     }

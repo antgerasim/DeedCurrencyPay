@@ -23,12 +23,9 @@ namespace DeedCurrencyPay.Helpers
 
         private static IEnumerable<AccountInfo> GetBaseAccountInfoList()
         {
-            var moneyCollection = MoneyInit.GetMoneyCollection();
-            return new List<AccountInfo>() {
-               // new AccountInfo(moneyCollection[0], new ValueObjectCollection<Money>(moneyCollection.Take(4))),
-                new AccountInfo(moneyCollection.ElementAt(0), new ValueObjectCollection<Money>(moneyCollection.Take(4).ToList())),
-
-                //new AccountInfo(moneyCollection[4], new ValueObjectCollection<Money>(moneyCollection.Skip(4).Take(4)))};
+            var moneyCollection = MoneyListInit.GetMoneyList();
+            return new List<AccountInfo>() {              
+                new AccountInfo(moneyCollection.ElementAt(0), new ValueObjectCollection<Money>(moneyCollection.Take(4).ToList())),                      
                 new AccountInfo(moneyCollection.ElementAt(4), new ValueObjectCollection<Money>(moneyCollection.Skip(4).Take(4).ToList()))
             };
 

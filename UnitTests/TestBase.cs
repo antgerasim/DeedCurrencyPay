@@ -25,6 +25,10 @@ namespace UnitTests
         protected IEnumerable<AccountInfo> dupeAccountInfoColl;
         protected IEnumerable<Money> uniqueMoneyColl;
         protected IEnumerable<Money> dupeMoneyColl;
+
+        protected IEnumerable<ValueObjectCollection<Money>> uniqueVOCollections;
+        protected IEnumerable<ValueObjectCollection<Money>> dupeVOCollections;
+
         protected Money[] basicTestMoneyArray;
 
         protected void TestInitializeBase()
@@ -42,9 +46,14 @@ namespace UnitTests
             uniqueAccountInfoColl = AccountInfoInit.GetAccountInfoList();
             dupeAccountInfoColl = AccountInfoInit.GetAccountInfosWithDuplicate();
 
-            uniqueMoneyColl = MoneyInit.GetMoneyCollection();
-            dupeMoneyColl = MoneyInit.GetMoneyListWithDuplicates();
-            basicTestMoneyArray = MoneyInit.GetOperatorTestMoney().ToArray();
+            uniqueMoneyColl = MoneyListInit.GetMoneyList();
+            dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates();
+            basicTestMoneyArray = MoneyListInit.GetOperatorTestMoney().ToArray();
+
+            uniqueVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionList();
+            dupeVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionListWithDuplicates();
+
+
         }
 
 

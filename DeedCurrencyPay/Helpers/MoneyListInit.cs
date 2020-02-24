@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace DeedCurrencyPay.Helpers
 {
-    public static class MoneyInit
+    public static class MoneyListInit
     {
-        public static ValueObjectCollection<Money> GetMoneyCollection()
+        public static ValueObjectCollection<Money> GetMoneyList()
         {
             return GetBaseMoneyList();
         }

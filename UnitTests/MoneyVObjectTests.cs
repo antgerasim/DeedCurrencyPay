@@ -35,8 +35,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorGreaterThen_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA > moneyB);
         }
@@ -44,8 +44,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorLessThen_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA < moneyB);
         }
@@ -53,8 +53,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorLessThenOrEquals_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA <= moneyB);
         }
@@ -62,8 +62,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorGreaterThenOrEquals_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA >= moneyB);
         }
@@ -71,8 +71,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorAddition_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA + moneyB);
         }
@@ -80,8 +80,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorSubstracton_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA - moneyB);
         }
@@ -89,8 +89,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorDivision_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA / moneyB);
         }
@@ -98,8 +98,8 @@ namespace UnitTests
         [TestMethod]
         public void OperatorMultiplication_When_Money_Currency_Not_Same_ArgumentException()
         {
-            var moneyA = basicTestMoneyArray[0];
-            var moneyB = basicTestMoneyArray[1];
+            var moneyA = basicTestMoneyList.ElementAt(0);
+            var moneyB = basicTestMoneyList.ElementAt(1);
 
             Assert.ThrowsException<ArgumentException>(() => moneyA * moneyB);
         }

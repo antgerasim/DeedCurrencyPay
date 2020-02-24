@@ -25,11 +25,9 @@ namespace UnitTests
         protected IEnumerable<AccountInfo> dupeAccountInfoColl;
         protected IEnumerable<Money> uniqueMoneyColl;
         protected IEnumerable<Money> dupeMoneyColl;
-
+        protected IEnumerable<Money> basicTestMoneyList;
         protected IEnumerable<ValueObjectCollection<Money>> uniqueVOCollections;
-        protected IEnumerable<ValueObjectCollection<Money>> dupeVOCollections;
-
-        protected Money[] basicTestMoneyArray;
+        protected IEnumerable<ValueObjectCollection<Money>> dupeVOCollections;        
 
         protected void TestInitializeBase()
         {
@@ -46,40 +44,19 @@ namespace UnitTests
             uniqueAccountInfoColl = AccountInfoInit.GetAccountInfoList();
             dupeAccountInfoColl = AccountInfoInit.GetAccountInfosWithDuplicate();
 
-            uniqueMoneyColl = MoneyListInit.GetMoneyList();
+            uniqueMoneyColl = MoneyListInit.GetMoneyList1();
             dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates();
-            basicTestMoneyArray = MoneyListInit.GetOperatorTestMoney().ToArray();
+            basicTestMoneyList = MoneyListInit.GetOperatorTestMoney();
 
             uniqueVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionList();
             dupeVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionListWithDuplicates();
-
-
-        }
-
-
-        protected static bool Can_Add_To_HashSet_Test_Mess(IList<int> list)
-        {
-            HashSet<int> hashSet = new HashSet<int>();
-            //var array = list.ToArray();
-            var array = new[] { 1, 1 };
-            var hashsetAddResult = true;
-            for (int i = 0; i < array.Length; i++)
-            {
-                var item = array[i];
-                hashsetAddResult = hashSet.Add(item);
-                if (!hashsetAddResult)
-                {
-                    break;
-                }
-            }
-            return hashsetAddResult;
         }
 
         protected static bool Can_Add_To_HashSet(IList<T> list)
         {
             HashSet<T> hashSet = new HashSet<T>();
             var array = list.ToArray();
-            //var array = new[] { 1, 1 };
+            
             var hashsetAddResult = true;
             for (int i = 0; i < array.Length; i++)
             {

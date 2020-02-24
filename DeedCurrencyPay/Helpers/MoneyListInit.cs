@@ -5,28 +5,31 @@ namespace DeedCurrencyPay.Helpers
 {
     public static class MoneyListInit
     {
-        public static ValueObjectCollection<Money> GetMoneyList()
+        public static ValueObjectCollection<Money> GetMoneyList1()
         {
-            return GetBaseMoneyList();
+            return GetBaseMoneyList1();
+        }
+
+        public static ValueObjectCollection<Money> GetMoneyList2()
+        {
+            return GetBaseMoneyList2();
         }
 
         public static ValueObjectCollection<Money> GetMoneyListWithDuplicates()
         {
-            var baseMoneyList = GetBaseMoneyList();
-            var dupeMoneyList = baseMoneyList.AddRange(GetBaseMoneyList());
-            return dupeMoneyList;
+            return GetBaseMoneyList1().AddRange(GetBaseMoneyList1());
         }
 
         public static IEnumerable<Money> GetOperatorTestMoney()
         {
-            return new[]
+            return new List<Money>
             {
                 new Money(100, Currency.USD),
                 new Money(200, Currency.EUR)
             };
         }
 
-        private static ValueObjectCollection<Money> GetBaseMoneyList()
+        private static ValueObjectCollection<Money> GetBaseMoneyList1()
         {
             return new ValueObjectCollection<Money>
             {
@@ -38,6 +41,20 @@ namespace DeedCurrencyPay.Helpers
                 new Money(10500, Currency.RUB),
                 new Money(10000, Currency.USD),
                 new Money(30500500, Currency.IDR)
+            };
+        }
+        private static ValueObjectCollection<Money> GetBaseMoneyList2()
+        {
+            return new ValueObjectCollection<Money>
+            {
+                new Money(10700, Currency.RUB),
+                new Money(580, Currency.EUR),
+                new Money(720, Currency.USD),
+                new Money(305050, Currency.IDR),
+                new Money(400, Currency.EUR),
+                new Money(11500, Currency.RUB),
+                new Money(10750, Currency.USD),
+                new Money(30700300, Currency.IDR)
             };
         }
     }

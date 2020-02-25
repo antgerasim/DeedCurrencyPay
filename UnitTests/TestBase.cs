@@ -35,7 +35,7 @@ namespace UnitTests
 
         protected void TestInitializeBase()
         {
-            var config = new ConfigurationBuilder().AddJsonFile("appconfig.json").Build();
+            var config = new ConfigurationBuilder().AddJsonFile("appconfig.json").Build();// ECB API URL HERE
 
             userRepository = new UserRepository();
             currencyService = new CurrencyService(config);

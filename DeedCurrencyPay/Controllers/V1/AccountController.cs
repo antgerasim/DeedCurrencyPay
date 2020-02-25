@@ -42,7 +42,7 @@ namespace DeedCurrencyPay.API.Controllers.V1
         [HttpGet(ApiRoutes.Account.Withdraw)]
         public IActionResult Withdraw([FromRoute]long userId, decimal amount)
         {
-            var response = accountService.Deposit(userId, amount);
+            var response = accountService.Withdraw(userId, amount);
 
             return Ok(response);
         }

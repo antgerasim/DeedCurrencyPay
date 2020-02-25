@@ -23,15 +23,16 @@ namespace DeedCurrencyPay.API.Services
             //3 c. Перевести деньги из одной валюты в другую
             var user = userRepository.GetById(userId);
             var targetCurrency = Currency.Parse(targetCurrencyStr);
-            if (targetCurrency == user.Account.Balance.SelectedCurrency)
+            var fromCurrency = user.Account.Balance.SelectedCurrency;
+            if (targetCurrency == fromCurrency)
             {
                 throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
             }
 
             var conversionAmount = currencyService.GetConversionAmount(user.Account.Balance.SelectedCurrency, targetCurrency, user.Account.Balance.Amount);
-            var account = user.Account.ConvertToCurrency(targetCurrency, conversionAmount);
+            user.Account.ConvertToCurrency(targetCurrency, conversionAmount);
 
-            var responseMsg = $"Перевод денег с {user.Account.Balance.SelectedCurrency} в {targetCurrency.ToString()}. Баланс: {user.Account.Balance.ToString()}.";  
+            var responseMsg = $"Конвертация валюты с {fromCurrency} в {targetCurrency.ToString()}. Баланс: {user.Account.Balance.ToString()}.";  
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
@@ -42,7 +43,7 @@ namespace DeedCurrencyPay.API.Services
             var user = userRepository.GetById(userId);
             user.Account.Deposit(new Money(amount, user.Account.Balance.SelectedCurrency));
 
-            var responseMsg = $"Кошелек пополнен на:  {amount} {user.Account.Balance.SelectedCurrency}.";
+            var responseMsg = $"Кошелек пополнен на: {amount} {user.Account.Balance.SelectedCurrency}. Баланс: {user.Account.Balance.ToString()}.";
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
@@ -62,7 +63,7 @@ namespace DeedCurrencyPay.API.Services
             //3 b. Снять деньги в одной из валют
             var user = userRepository.GetById(userId);
             user.Account.Withdraw(new Money(amount, user.Account.Balance.SelectedCurrency));
-            var responseMsg = $"Снятие наличных на: {amount} {user.Account.Balance.SelectedCurrency}.";
+            var responseMsg = $"Снятие денег на: {amount} {user.Account.Balance.SelectedCurrency}. Баланс: {user.Account.Balance.ToString()}.";
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }

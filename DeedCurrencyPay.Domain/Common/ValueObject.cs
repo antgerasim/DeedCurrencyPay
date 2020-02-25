@@ -81,7 +81,7 @@ namespace DeedCurrencyPay.Domain.Common
                         (current, value) => current * multiplier + value.GetHashCode());
         }
 
-        private static IEnumerable<FieldInfo> GetFields(object obj)
+        public IEnumerable<FieldInfo> GetFields(object obj)
         {
             var t = obj.GetType();
 

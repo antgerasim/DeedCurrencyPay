@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DeedCurrencyPay.Domain;
 
 namespace DeedCurrencyPay.API.Services
 {
     public interface IUserService
     {
+        User GetById(int id);
     }
 }

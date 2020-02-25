@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace DeedCurrencyPay.Domain.Common
 {
@@ -36,12 +37,6 @@ namespace DeedCurrencyPay.Domain.Common
             }
         }
 
-
-        public bool Equals(TValueobject other)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool Equals(object obj)
         {
             if (obj == null || obj.GetType() != GetType())
@@ -52,6 +47,35 @@ namespace DeedCurrencyPay.Domain.Common
             var list = obj as IValueObjectCollection<TValueobject>;
 
             return Equals(list);
+        }
+
+        public bool Equals(TValueobject other)
+        {
+            if (other == null)
+                return false;
+
+            var t = GetType();
+            var otherType = other.GetType();
+
+            if (t != otherType)
+                return false;
+           
+            var fields = GetFields(this);
+
+            foreach (var field in fields)
+            {
+                var value1 = field.GetValue(other);
+                var value2 = field.GetValue(this);
+
+                if (value1 == null)
+                {
+                    if (value2 != null)
+                        return false;
+                }
+                else if (!value1.Equals(value2))
+                    return false;
+            }
+            return true;
         }
 
         public bool Equals(IValueObjectCollection<TValueobject> list)
@@ -94,7 +118,14 @@ namespace DeedCurrencyPay.Domain.Common
             return new ValueObjectCollection<TValueobject>(_Items);
         }
 
-
+        public IValueObjectCollection<TValueobject> AddRange(IValueObjectCollection<TValueobject> collection)
+        {
+            foreach (var item in collection)
+            {
+                _Items.Add(item);
+            }
+            return new ValueObjectCollection<TValueobject>(_Items);
+        }
 
         public void Clear()
         {
@@ -120,8 +151,23 @@ namespace DeedCurrencyPay.Domain.Common
         {
             return GetEnumerator();
         }
+        
+        private IEnumerable<FieldInfo> GetFields(object obj)
+        {
+            var t = obj.GetType();
 
+            var fields = new List<FieldInfo>();
 
+            while (t != typeof(object))
+            {
+                if (t == null) continue;
+                fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
+
+                t = t.BaseType;
+            }
+
+            return fields;
+        }
 
         public override int GetHashCode()
         {

@@ -1,5 +1,4 @@
 ﻿using DeedCurrencyPay.Domain.Common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +9,7 @@ namespace DeedCurrencyPay.Domain
     {
         public AccountInfo(Money balance, IValueObjectCollection<Money> otherCurrencies)
         {
-            Balance = balance;            
+            Balance = balance;
             OtherCurrencies = otherCurrencies;
         }
 

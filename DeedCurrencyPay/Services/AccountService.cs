@@ -37,7 +37,7 @@ namespace DeedCurrencyPay.API.Services
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
 
-        public ResponseVm Deposit(long userId, decimal amount)//make async
+        public ResponseVm Deposit(long userId, decimal amount)
         {
             //3 a. Пополнить кошелек в одной из валют
             var user = userRepository.GetById(userId);

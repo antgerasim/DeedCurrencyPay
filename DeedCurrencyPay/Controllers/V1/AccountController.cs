@@ -26,8 +26,7 @@ namespace DeedCurrencyPay.API.Controllers.V1
         public IActionResult AccountInfo([FromRoute]long userId)
         {
             var response = accountService.GetAccountInfo(userId);
-
-            //throw new Exception();//Global exception handler test
+           
             return Ok(response);
         }
 

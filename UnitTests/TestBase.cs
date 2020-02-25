@@ -13,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace UnitTests
 {
-
     public abstract class TestBase<T>
     {
         protected IUserRepository userRepository;

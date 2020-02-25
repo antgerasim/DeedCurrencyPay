@@ -1,14 +1,12 @@
 ﻿using DeedCurrencyPay.Domain;
 using DeedCurrencyPay.Domain.AccountAggregate;
 using DeedCurrencyPay.Infrastructure.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DeedCurrencyPay.Infrastructure.Repositories
 {
-   public class AccountRepository : IAccountRepository
+    public class AccountRepository : IAccountRepository
     {
         private readonly IEnumerable<Account> _accounts;
 

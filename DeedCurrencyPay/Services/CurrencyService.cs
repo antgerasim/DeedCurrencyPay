@@ -1,4 +1,5 @@
 ﻿using DeedCurrencyPay.Domain;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Globalization;
 using System.Xml;
@@ -9,11 +10,10 @@ namespace DeedCurrencyPay.API.Services
     {
         private readonly string ApiRoute;
         private readonly Currency LeadCurrency;
-        public CurrencyService()
+        public CurrencyService(IConfiguration config)
         {
-            //todo appsettings
-            LeadCurrency = Currency.EUR;
-            ApiRoute = @"http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+            LeadCurrency = Currency.Parse(config["LeadCurrency"]);
+            ApiRoute = @$"{config["ApiRoute"]}";
         }
 
         public ConversionExchangeRate GetConversionExchangeRate(Currency fromCurr, Currency toCurr)

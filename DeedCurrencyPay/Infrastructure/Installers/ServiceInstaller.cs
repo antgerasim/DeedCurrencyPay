@@ -17,6 +17,7 @@ namespace DeedCurrencyPay.API.Infrastructure.Installers
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICurrencyService, CurrencyService>();
             services.AddSingleton<IUserRepository, UserRepository>();
         }
     }

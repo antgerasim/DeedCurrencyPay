@@ -1,64 +1,61 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DeedCurrencyPay.API.Infrastructure;
 using DeedCurrencyPay.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace DeedCurrencyPay.API.Controllers.V1
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [AllowAnonymous]
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IConfiguration config;
+        private readonly IAccountService accountService;
+
         public AccountController(IAccountService accountService)
         {
-
-        }
-        /*
-                // GET: api/Account
-                [HttpGet]
-                public async Task<IActionResult> Get()
-                {
-                    return new string[] { "value1", "value2" };
-                }
-
-
-
-
-            */
-
-
-        //https://stackoverflow.com/questions/50882489/have-a-webapi-controller-send-an-http-request-to-another-rest-service
-        //todo make distinct apigetService for conversionrate and inject in controller
-
-        // GET: api/Account
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
+            //this.config = config;
+            this.accountService = accountService;
         }
 
-        // GET: api/Account/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+
+        [HttpGet(ApiRoutes.Account.AccountInfo)]
+        public IActionResult AccountInfo([FromRoute]long userId)
         {
-            return "value";
+            var response = accountService.GetAccountInfo(userId);
+
+            //throw new Exception();//Global exception handler test
+
+            return Ok(response);
         }
 
-        // POST: api/Account
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet(ApiRoutes.Account.Deposit)]
+        public IActionResult Deposit([FromRoute]long userId, decimal amount)
         {
+            var response = accountService.Deposit(userId, amount);
+
+            return Ok(response);
         }
 
-        // PUT: api/Account/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpGet(ApiRoutes.Account.Withdraw)]
+        public IActionResult Withdraw([FromRoute]long userId, decimal amount)
         {
+            var response = accountService.Deposit(userId, amount);
+
+            return Ok(response);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpGet(ApiRoutes.Account.Convert)]
+        public IActionResult ConvertToCurruncy([FromRoute]long userId, string targetCurrency)
         {
+            var response = accountService.ConvertToCurrency(userId, targetCurrency.ToUpper());
+
+            return Ok(response);
         }
     }
 }

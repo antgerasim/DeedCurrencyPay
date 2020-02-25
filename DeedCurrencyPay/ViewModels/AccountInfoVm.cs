@@ -8,7 +8,7 @@ namespace DeedCurrencyPay.API.ViewModels
 {
     public class ResponseVm
     {
-        public decimal Balance { get; set; }
+        public decimal Amount { get; set; }
         public Currency Currency { get; set; }
         public String Message { get; set; }
     }

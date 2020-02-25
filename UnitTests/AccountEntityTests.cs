@@ -127,6 +127,34 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Deposit_Valid_Amount_100_Valid_Currency_Rub()
+        {
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var before_Deposit_Account_Balance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
+            var money_100Rub = new Money(100, Currency.RUB);            
+
+            accountUnderTest.Deposit(money_100Rub);
+
+            var after_Deposit_Account_Balance = before_Deposit_Account_Balance + money_100Rub;
+
+            Assert.AreEqual(after_Deposit_Account_Balance, accountUnderTest.Balance);
+        }
+
+        [TestMethod]
+        public void Withdraw_Valid_Amount_100_Valid_Currency_Rub()
+        {
+            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
+            var before_Deposit_Account_Balance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
+            var money_100Rub = new Money(50, Currency.RUB);
+
+            accountUnderTest.Withdraw(money_100Rub);
+
+            var after_Deposit_Account_Balance = before_Deposit_Account_Balance - money_100Rub;
+
+            Assert.AreEqual(after_Deposit_Account_Balance, accountUnderTest.Balance);
+        }
+
+        [TestMethod]
         public void GetAccountInfo_100_Rub_Other_Currencies_Usd_Eur()
         {
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");

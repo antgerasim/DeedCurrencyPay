@@ -19,7 +19,7 @@ namespace DeedCurrencyPay.Infrastructure.Repositories
           
         }
 
-        public User GetById(int id)
+        public User GetById(long id)
         {
             return _users.SingleOrDefault(x => x.Id == id);
         }

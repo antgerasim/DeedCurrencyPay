@@ -4,8 +4,9 @@ namespace DeedCurrencyPay.API.Services
 {
     public interface IAccountService
     {
-        ResponseVm ConvertToCurrency(int userId, string currTo);
-        ResponseVm Deposit(int userId, decimal amount);
-        ResponseVm Withdraw(int userId, decimal amount);
+        ResponseVm ConvertToCurrency(long userId, string currTo);
+        ResponseVm Deposit(long userId, decimal amount);
+        ResponseVm Withdraw(long userId, decimal amount);
+        ResponseVm GetAccountInfo(long userId);
     }
 }

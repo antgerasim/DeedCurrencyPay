@@ -22,10 +22,14 @@ namespace DeedCurrencyPay.Domain
 
        
 
-        public Account ConvertToCurrency(Currency toCurrency, ConversionAmount conversionResult)
+        public Account ConvertToCurrency(Currency targetCurrency, ConversionAmount conversionResult)
         {
+            
+            if (targetCurrency == Balance.SelectedCurrency)
+            {
+                throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
+            }
 
-            //var conversionResult = currencyService.GetConversionAmount(Balance.SelectedCurrency, toCurrency, Balance.Amount);
             Balance = new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo);
             return this;
         }

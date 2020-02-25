@@ -9,6 +9,13 @@ namespace UnitTests
     [TestClass]
     public class CurrencyServiceTest : TestBase<Currency>
     {
+
+        [TestInitialize]
+        public void Setup()
+        {
+            TestInitializeBase();
+        }
+
         #region Exception Test
         [TestMethod]
         public void When_FromCurrency_And_ToCurrency_Are_Both_LeadCurrency_ArgumentException()
@@ -16,7 +23,7 @@ namespace UnitTests
             var euroFrom = Currency.EUR;
             var euroTo = Currency.EUR;  
 
-            Assert.ThrowsException<ArgumentException>(() => new CurrencyService().GetConversionExchangeRate(euroFrom, euroTo));
+            Assert.ThrowsException<ArgumentException>(() => currencyService.GetConversionExchangeRate(euroFrom, euroTo));
         }
         #endregion
 
@@ -27,8 +34,8 @@ namespace UnitTests
             var dollar = Currency.USD;
             var rouble = Currency.RUB;
 
-            var usdToRubRslt = new CurrencyService().GetConversionExchangeRate(dollar, rouble);
-            var rubToUsdRslt = new CurrencyService().GetConversionExchangeRate(rouble, dollar);
+            var usdToRubRslt = currencyService.GetConversionExchangeRate(dollar, rouble);
+            var rubToUsdRslt = currencyService.GetConversionExchangeRate(rouble, dollar);
 
             Assert.IsNotNull(usdToRubRslt);
             Assert.IsNotNull(rubToUsdRslt);

@@ -7,6 +7,6 @@ namespace DeedCurrencyPay.Domain.UserAggregate
 {
     public interface IUserRepository : IRepository<User>
     {
-        User GetById(int id);
+        User GetById(long id);
     }
 }

@@ -18,20 +18,22 @@ namespace DeedCurrencyPay.API.Services
             this.currencyService = currencyService ?? throw new ArgumentNullException(nameof(currencyService)); ;
         }
 
-        public ResponseVm ConvertToCurrency(long userId, string targetCurrency)
+        public ResponseVm ConvertToCurrency(long userId, string targetCurrencyStr)
         {
             //3 c. Перевести деньги из одной валюты в другую
             var user = userRepository.GetById(userId);
-
-            if (targetCurrency == user.Account.Balance.SelectedCurrency.ToString())
+            var targetCurrency = Currency.Parse(targetCurrencyStr);
+            if (targetCurrency == user.Account.Balance.SelectedCurrency)
             {
                 throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
             }
 
-            var conversionAmount = currencyService.GetConversionAmount(user.Account.Balance.SelectedCurrency, Currency.Parse(targetCurrency), user.Account.Balance.Amount);
-            var account = user.Account.ConvertToCurrency(Currency.Parse(targetCurrency.ToUpper()), conversionAmount);
+            var conversionAmount = currencyService.GetConversionAmount(user.Account.Balance.SelectedCurrency, targetCurrency, user.Account.Balance.Amount);
+            var account = user.Account.ConvertToCurrency(targetCurrency, conversionAmount);
 
-            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, account.ToString());
+            var responseMsg = $"Перевод денег с {user.Account.Balance.SelectedCurrency} в {targetCurrency.ToString()}. Баланс: {user.Account.Balance.ToString()}.";  
+
+            return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
 
         public ResponseVm Deposit(long userId, decimal amount)//make async

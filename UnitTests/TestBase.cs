@@ -9,6 +9,7 @@ using DeedCurrencyPay.Infrastructure.Helpers;
 using DeedCurrencyPay.API.Services;
 using DeedCurrencyPay.Domain.UserAggregate;
 using DeedCurrencyPay.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace UnitTests
 {
@@ -34,8 +35,10 @@ namespace UnitTests
 
         protected void TestInitializeBase()
         {
+            var config = new ConfigurationBuilder().AddJsonFile("appconfig.json").Build();
+
             userRepository = new UserRepository();
-            currencyService = new CurrencyService();
+            currencyService = new CurrencyService(config);
             accountService = new AccountService(userRepository, currencyService);
 
             defaultThreeAccountCurrencies = new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR };

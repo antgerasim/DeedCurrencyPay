@@ -37,6 +37,15 @@ namespace DeedCurrencyPay.API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeedCurrencyPay.API");
+                c.RoutePrefix = string.Empty;
+            });
+
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

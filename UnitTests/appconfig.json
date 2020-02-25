@@ -1,0 +1,4 @@
+﻿{
+  "LeadCurrency": "EUR",
+  "ApiRoute": "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+}

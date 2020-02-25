@@ -14,7 +14,6 @@ namespace DeedCurrencyPay.API.Controllers.V1
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IConfiguration config;
         private readonly IAccountService accountService;
 
         public AccountController(IAccountService accountService)
@@ -23,14 +22,12 @@ namespace DeedCurrencyPay.API.Controllers.V1
             this.accountService = accountService;
         }
 
-
         [HttpGet(ApiRoutes.Account.AccountInfo)]
         public IActionResult AccountInfo([FromRoute]long userId)
         {
             var response = accountService.GetAccountInfo(userId);
 
             //throw new Exception();//Global exception handler test
-
             return Ok(response);
         }
 

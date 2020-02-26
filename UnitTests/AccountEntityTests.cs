@@ -131,7 +131,7 @@ namespace UnitTests
         {
             var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
             var before_Deposit_Account_Balance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
-            var money_100Rub = new Money(100, Currency.RUB);            
+            var money_100Rub = new Money(100, Currency.RUB);
 
             accountUnderTest.Deposit(money_100Rub);
 
@@ -153,34 +153,6 @@ namespace UnitTests
 
             Assert.AreEqual(after_Deposit_Account_Balance, accountUnderTest.Balance);
         }
-
-        [TestMethod]
-        public void GetAccountInfo_100_Rub_Other_Currencies_Usd_Eur()
-        {
-            var accountUnderTest = uniqueAccounts.FirstOrDefault(acc => acc.UserName == "Igor");
-            var accountBalance = new Money(accountUnderTest.Balance.Amount, accountUnderTest.Balance.SelectedCurrency);
-                       
-            var accountInfo = accountUnderTest.GetAccountInfo(GetConvertedMoneyCollection(accountUnderTest));
-
-            Assert.AreEqual(accountInfo.Balance, accountBalance);
-            Assert.IsFalse(accountInfo.OtherCurrencies.Contains(accountInfo.Balance));            
-        }
-
-        private IValueObjectCollection<Money> GetConvertedMoneyCollection(Account account)
-        {
-            var moneyCollection = new ValueObjectCollection<Money>();
-            foreach (var targetCurrency in account.Currencies)
-            {
-                if (targetCurrency == account.Balance.SelectedCurrency)
-                {
-                    continue;
-                }
-                var conversionResult = currencyService.GetConversionAmount(account.Balance.SelectedCurrency, targetCurrency, account.Balance.Amount);
-                moneyCollection.Add(new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo));
-            }
-            return moneyCollection;
-        }
-
 
         #endregion Logic
     }

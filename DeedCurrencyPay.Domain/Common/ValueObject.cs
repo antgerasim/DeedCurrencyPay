@@ -40,30 +40,7 @@ namespace DeedCurrencyPay.Domain.Common
 
         public virtual bool Equals(T other)
         {
-            if (other == null)
-                return false;
-
-            var t = GetType();
-            var otherType = other.GetType();
-
-            if (t != otherType)
-                return false;
-            var fields = GetFields(this);
-
-            foreach (var field in fields)
-            {
-                var value1 = field.GetValue(other);
-                var value2 = field.GetValue(this);
-
-                if (value1 == null)
-                {
-                    if (value2 != null)
-                        return false;
-                }
-                else if (!value1.Equals(value2))
-                    return false;
-            }
-            return true;
+            return Utils.Equals(this, other);
         }
 
         public override int GetHashCode()
@@ -83,19 +60,7 @@ namespace DeedCurrencyPay.Domain.Common
 
         public IEnumerable<FieldInfo> GetFields(object obj)
         {
-            var t = obj.GetType();
-
-            var fields = new List<FieldInfo>();
-
-            while (t != typeof(object))
-            {
-                if (t == null) continue;
-                fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
-
-                t = t.BaseType;
-            }
-
-            return fields;
+            return Utils.GetFields(obj);
         }
     }
 }

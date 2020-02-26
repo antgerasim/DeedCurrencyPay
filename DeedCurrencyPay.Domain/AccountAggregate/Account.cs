@@ -20,11 +20,11 @@ namespace DeedCurrencyPay.Domain
         public IEnumerable<Currency> Currencies { get; private set; }
         public string UserName { get; private set; } //для усиления идентичности (Equals, GetHashCode) дублируем имя из User
 
-       
+
 
         public Account ConvertToCurrency(Currency targetCurrency, ConversionAmount conversionResult)
         {
-            
+
             if (targetCurrency == Balance.SelectedCurrency)
             {
                 throw new ArgumentException("Невозможно конвертировать в одинаковую валюту ");
@@ -45,20 +45,6 @@ namespace DeedCurrencyPay.Domain
                 throw new InvalidOperationException("Для пополнения кошелька укажите суммму выше нуля.");
             }
             Balance += money;
-        }
-
-        public AccountInfo GetAccountInfo(IValueObjectCollection<Money> moneyCollection)
-        {
-            //ToDo Domain Policy Validation Pattern
-            foreach (var money in moneyCollection)
-            {
-                if (money.SelectedCurrency == Balance.SelectedCurrency)
-                {
-                    moneyCollection.Remove(money);
-                }
-            }
-
-            return new AccountInfo(this.Balance, moneyCollection);
         }
 
         public void Withdraw(Money money)

@@ -52,8 +52,8 @@ namespace UnitTests
             uniqueAccountInfoColl = AccountInfoInit.GetAccountInfoList();
             dupeAccountInfoColl = AccountInfoInit.GetAccountInfosWithDuplicate();
 
-            uniqueMoneyColl = MoneyListInit.GetMoneyList1();
-            dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates();
+            uniqueMoneyColl = MoneyListInit.GetMoneyList1() as IEnumerable<Money>;
+            dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates() as IEnumerable<Money>;
             basicTestMoneyList = MoneyListInit.GetOperatorTestMoney();
 
             uniqueVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionList();

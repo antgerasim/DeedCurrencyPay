@@ -32,7 +32,7 @@ namespace DeedCurrencyPay.API.Services
             var conversionAmount = currencyService.GetConversionAmount(user.Account.Balance.SelectedCurrency, targetCurrency, user.Account.Balance.Amount);
             user.Account.ConvertToCurrency(targetCurrency, conversionAmount);
 
-            var responseMsg = $"Конвертация валюты с {fromCurrency} в {targetCurrency.ToString()}. Баланс: {user.Account.Balance.ToString()}.";  
+            var responseMsg = $"Конвертация валюты с {fromCurrency} в {targetCurrency.ToString()}. Баланс: {user.Account.Balance.ToString()}.";
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
@@ -52,8 +52,8 @@ namespace DeedCurrencyPay.API.Services
         {
             //3 d. Получить состояние своего кошелька (сумму денег в каждой из валют)
             var user = userRepository.GetById(userId);
-            var accountInfo = user.Account.GetAccountInfo(GetConvertedMoneyCollection(user.Account));
-            var responseMsg = accountInfo.ToString();
+            var moneyCollection = GetConvertedMoneyCollection(user.Account);
+            var responseMsg = new AccountInfo(user.Account.Balance, moneyCollection).ToString();
 
             return CreateResponseVm(user.Account.Balance.Amount, user.Account.Balance.SelectedCurrency, responseMsg);
         }
@@ -84,9 +84,9 @@ namespace DeedCurrencyPay.API.Services
                     continue;
                 }
                 var conversionResult = currencyService.GetConversionAmount(account.Balance.SelectedCurrency, targetCurrency, account.Balance.Amount);
-                moneyCollection.Add(new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo));
+                moneyCollection = (ValueObjectCollection<Money>)moneyCollection.AddImmutable(new Money(conversionResult.ConvertedAmountValue, conversionResult.CurrencyTo));
             }
-            return moneyCollection;
+            return moneyCollection;           
         }
     }
 }

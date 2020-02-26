@@ -1,31 +1,49 @@
-﻿using DeedCurrencyPay.Domain.Common;
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace DeedCurrencyPay.Domain
 {
     public static class Utils
-    {/*
-        public static IEnumerable<FieldInfo> GetFields(this object obj, ValueObjectCollection<IValueObject<Object>> valueObjectCollection)
+    {
+        public static new bool Equals(object current, object other)
         {
+            if (other == null)
+                return false;
 
-            var t = obj.GetType();
+            if (current.GetType() != other.GetType())
+                return false;
 
+            var fields = GetFields(current);
+
+            foreach (var field in fields)
+            {
+                var value1 = field.GetValue(other);
+                var value2 = field.GetValue(current);
+
+                if (value1 == null)
+                {
+                    if (value2 != null)
+                        return false;
+                }
+                else if (!value1.Equals(value2))
+                    return false;
+            }
+            return true;
+        }
+
+        public static IEnumerable<FieldInfo> GetFields(object obj)
+        {
+            var type = obj.GetType();
             var fields = new List<FieldInfo>();
 
-            while (t != typeof(object))
+            while (type != typeof(object))
             {
-                if (t == null) continue;
-                fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
+                if (type == null) continue;
+                fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
 
-                t = t.BaseType;
+                type = type.BaseType;
             }
-
             return fields;
         }
-        */
     }
 }

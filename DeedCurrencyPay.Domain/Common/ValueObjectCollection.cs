@@ -1,40 +1,62 @@
-﻿using DeedCurrencyPay.Domain.Common;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
 namespace DeedCurrencyPay.Domain.Common
 {
-    public class ValueObjectCollection<TValueobject> : IValueObjectCollection<TValueobject>
-        where TValueobject : IValueObject<TValueobject>
+    public class ValueObjectCollection<TValueObject> : IValueObjectCollection<TValueObject>
+        where TValueObject : IValueObject<TValueObject>
     {
-        protected readonly ICollection<TValueobject> _Items;
-        public bool IsReadOnly => _Items.IsReadOnly;
+        //todo next: let ValueObjectCollection implement IImmutableCollection with custom object initializer class like
+        //https://smellegantcode.wordpress.com/2009/01/29/using-collection-initializers-with-immutable-lists/
 
-        public int Count => _Items.Count;
+        private readonly IImmutableList<TValueObject> _Items;
 
-        public ValueObjectCollection() : this(new List<TValueobject>())
+        public ValueObjectCollection() : this(new List<TValueObject>())
         {
         }
 
-        public ValueObjectCollection(ICollection<TValueobject> collection)
+        public ValueObjectCollection(IEnumerable<TValueObject> collection)
         {
             if (collection == null)
             {
                 throw new ArgumentNullException();
             }
+            _Items = collection.ToImmutableList();
+            _Items.AddRange(collection);
+        }
 
-            _Items = collection.ToList();
+        public int Count => _Items.Count;
 
-            if (collection.Count > 0)
-            {
-                foreach (var item in collection)
-                {
-                    _Items.Add(item);
-                }
-            }
+        public IValueObjectCollection<TValueObject> AddImmutable(TValueObject item)
+        {
+
+            var rslt = _Items.Add(item);
+            return new ValueObjectCollection<TValueObject>(rslt);
+        }
+
+        public IValueObjectCollection<TValueObject> AddRange(IValueObjectCollection<TValueObject> collection)
+        {            
+            var resultList = _Items.AddRange(collection.ToImmutableList());
+            return new ValueObjectCollection<TValueObject>(resultList);
+        }
+
+        public void Clear()
+        {
+            _Items.Clear();
+        }
+
+        public bool Contains(TValueObject item)
+        {
+            return _Items.Contains(item);
+        }
+
+        public TValueObject ElementAt(int index)
+        {
+            return _Items.ElementAt(index);
         }
 
         public override bool Equals(object obj)
@@ -44,129 +66,41 @@ namespace DeedCurrencyPay.Domain.Common
                 return false;
             }
 
-            var list = obj as IValueObjectCollection<TValueobject>;
+            var list = obj as IValueObjectCollection<TValueObject>;
 
             return Equals(list);
         }
 
-        public bool Equals(TValueobject other)
+        public bool Equals(TValueObject other)
         {
-            if (other == null)
-                return false;
-
-            var t = GetType();
-            var otherType = other.GetType();
-
-            if (t != otherType)
-                return false;
-           
-            var fields = GetFields(this);
-
-            foreach (var field in fields)
-            {
-                var value1 = field.GetValue(other);
-                var value2 = field.GetValue(this);
-
-                if (value1 == null)
-                {
-                    if (value2 != null)
-                        return false;
-                }
-                else if (!value1.Equals(value2))
-                    return false;
-            }
-            return true;
+           return  Utils.Equals(this, other);
         }
 
-        public bool Equals(IValueObjectCollection<TValueobject> list)
+        public bool Equals(IValueObjectCollection<TValueObject> other)
         {
-            if (list.Count != this.Count)
+            if (other.Count != this.Count)
                 return false;
 
             bool same = true;
 
-            foreach (var item in list)
+            foreach (var item in other)
             {
                 if (same)
                 {
-                    same = (null != list.FirstOrDefault(x => x.Equals(item)));
+                    same = (null != other.FirstOrDefault(x => x.Equals(item)));
                 }
             }
             return same;
         }
 
-
-        public void Add(TValueobject item)
-        {
-            _Items.Add(item);
-        }
-
-        bool ICollection<TValueobject>.Remove(TValueobject item)
-        {
-            return _Items.Remove(item);
-        }
-
-        public IValueObjectCollection<TValueobject> AddRange(IEnumerable<TValueobject> collection)
-        {
-            using (IEnumerator<TValueobject> en = collection.GetEnumerator())
-            {
-                while (en.MoveNext())
-                {
-                    _Items.Add(en.Current);
-                }
-            }
-            return new ValueObjectCollection<TValueobject>(_Items);
-        }
-
-        public IValueObjectCollection<TValueobject> AddRange(IValueObjectCollection<TValueobject> collection)
-        {
-            foreach (var item in collection)
-            {
-                _Items.Add(item);
-            }
-            return new ValueObjectCollection<TValueobject>(_Items);
-        }
-
-        public void Clear()
-        {
-            _Items.Clear();
-        }
-
-        public bool Contains(TValueobject item)
-        {
-            return _Items.Contains(item);
-        }
-
-        public void CopyTo(TValueobject[] array, int arrayIndex)
-        {
-            _Items.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<TValueobject> GetEnumerator()
+        public IEnumerator<TValueObject> GetEnumerator()
         {
             return _Items.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator() //dont touch!
         {
-            return GetEnumerator();
-        }
-        
-        private IEnumerable<FieldInfo> GetFields(object obj)
-        {
-            var t = obj.GetType();
-
-            var fields = new List<FieldInfo>();
-
-            while (t != typeof(object))
-            {
-                if (t == null) continue;
-                fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
-
-                t = t.BaseType;
-            }
-
-            return fields;
+            return _Items.GetEnumerator();
         }
 
         public override int GetHashCode()
@@ -180,5 +114,25 @@ namespace DeedCurrencyPay.Domain.Common
             return hc;
         }
 
+        public IValueObjectCollection<TValueObject> RemoveImmutable(TValueObject item)
+        {
+            _Items.Remove(item);
+            return new ValueObjectCollection<TValueObject>(_Items);
+        }
+
+        public IValueObjectCollection<TValueObject> Skip(int count)
+        {
+            return new ValueObjectCollection<TValueObject>(_Items.Skip(count));
+        }
+
+        public IValueObjectCollection<TValueObject> Take(int count)
+        {
+            return new ValueObjectCollection<TValueObject>(_Items.Take(count));
+        }
+
+        public TValueObject[] ToArray()
+        {
+            return _Items.ToArray();
+        }
     }
 }

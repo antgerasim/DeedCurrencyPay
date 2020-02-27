@@ -13,7 +13,7 @@ namespace DeedCurrencyPay.API.Services
             this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public User GetById(int id)
+        public User GetById(long id)
         {
             return userRepository.GetById(id);
         }

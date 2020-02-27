@@ -15,9 +15,10 @@ namespace UnitTests
 {
     public abstract class TestBase<T>
     {
+        protected IUserService userService;
         protected IUserRepository userRepository;
-        protected ICurrencyService currencyService;
         protected IAccountService accountService;
+        protected ICurrencyService currencyService;        
         protected IEnumerable<Currency> defaultThreeAccountCurrencies;
         protected IEnumerable<Currency> defaultOneAccountCurrency;
         protected IEnumerable<User> uniqueUsers;
@@ -26,8 +27,8 @@ namespace UnitTests
         protected IEnumerable<Account> dupeAccounts;
         protected IEnumerable<AccountInfo> uniqueAccountInfoColl;
         protected IEnumerable<AccountInfo> dupeAccountInfoColl;
-        protected IEnumerable<Money> uniqueMoneyColl;
-        protected IEnumerable<Money> dupeMoneyColl;
+        protected IValueObjectCollection<Money> uniqueMoneyColl;
+        protected IValueObjectCollection<Money> dupeMoneyColl;
         protected IEnumerable<Money> basicTestMoneyList;
         protected IEnumerable<IValueObjectCollection<Money>> uniqueVOCollections;
         protected IEnumerable<IValueObjectCollection<Money>> dupeVOCollections;        
@@ -37,8 +38,10 @@ namespace UnitTests
             var config = new ConfigurationBuilder().AddJsonFile("appconfig.json").Build();// ECB API URL HERE
 
             userRepository = new UserRepository();
+            userService = new UserService(userRepository);
             currencyService = new CurrencyService(config);
-            accountService = new AccountService(userRepository, currencyService);
+            accountService = new AccountService(userService, currencyService);
+            
 
             defaultThreeAccountCurrencies = new List<Currency> { Currency.RUB, Currency.USD, Currency.EUR };
             defaultOneAccountCurrency = new List<Currency> { Currency.IDR };
@@ -52,8 +55,8 @@ namespace UnitTests
             uniqueAccountInfoColl = AccountInfoInit.GetAccountInfoList();
             dupeAccountInfoColl = AccountInfoInit.GetAccountInfosWithDuplicate();
 
-            uniqueMoneyColl = MoneyListInit.GetMoneyList1() as IEnumerable<Money>;
-            dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates() as IEnumerable<Money>;
+            uniqueMoneyColl = MoneyListInit.GetMoneyList1();
+            dupeMoneyColl = MoneyListInit.GetMoneyListWithDuplicates();
             basicTestMoneyList = MoneyListInit.GetOperatorTestMoney();
 
             uniqueVOCollections = ValueObjectCollectionInit.GetValueObjectCollectionList();

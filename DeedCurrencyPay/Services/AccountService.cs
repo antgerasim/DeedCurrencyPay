@@ -10,18 +10,18 @@ namespace DeedCurrencyPay.API.Services
     public class AccountService : IAccountService
     {
         private readonly ICurrencyService currencyService;
-        private readonly IUserRepository userRepository;
+        private readonly IUserService userService;
 
-        public AccountService(IUserRepository userRepository, ICurrencyService currencyService)
+        public AccountService(IUserService userService, ICurrencyService currencyService)
         {
-            this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.currencyService = currencyService ?? throw new ArgumentNullException(nameof(currencyService)); ;
         }
 
         public ResponseVm ConvertToCurrency(long userId, string targetCurrencyStr)
         {
             //3 c. Перевести деньги из одной валюты в другую
-            var user = userRepository.GetById(userId);
+            var user = userService.GetById(userId);
             var targetCurrency = Currency.Parse(targetCurrencyStr);
             var fromCurrency = user.Account.Balance.SelectedCurrency;
             if (targetCurrency == fromCurrency)
@@ -40,7 +40,7 @@ namespace DeedCurrencyPay.API.Services
         public ResponseVm Deposit(long userId, decimal amount)
         {
             //3 a. Пополнить кошелек в одной из валют
-            var user = userRepository.GetById(userId);
+            var user = userService.GetById(userId);
             user.Account.Deposit(new Money(amount, user.Account.Balance.SelectedCurrency));
 
             var responseMsg = $"Кошелек пополнен на: {amount} {user.Account.Balance.SelectedCurrency}. Баланс: {user.Account.Balance.ToString()}.";
@@ -51,7 +51,7 @@ namespace DeedCurrencyPay.API.Services
         public ResponseVm GetAccountInfo(long userId)
         {
             //3 d. Получить состояние своего кошелька (сумму денег в каждой из валют)
-            var user = userRepository.GetById(userId);
+            var user = userService.GetById(userId);
             var moneyCollection = GetConvertedMoneyCollection(user.Account);
             var responseMsg = new AccountInfo(user.Account.Balance, moneyCollection).ToString();
 
@@ -61,7 +61,7 @@ namespace DeedCurrencyPay.API.Services
         public ResponseVm Withdraw(long userId, decimal amount)
         {
             //3 b. Снять деньги в одной из валют
-            var user = userRepository.GetById(userId);
+            var user = userService.GetById(userId);
             user.Account.Withdraw(new Money(amount, user.Account.Balance.SelectedCurrency));
             var responseMsg = $"Снятие денег на: {amount} {user.Account.Balance.SelectedCurrency}. Баланс: {user.Account.Balance.ToString()}.";
 

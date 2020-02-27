@@ -12,6 +12,7 @@ namespace DeedCurrencyPay.Domain.Common
     {
         //todo next: let ValueObjectCollection implement IImmutableCollection with custom object initializer class like
         //https://smellegantcode.wordpress.com/2009/01/29/using-collection-initializers-with-immutable-lists/
+        //Todo inherit IImmutableList to IValueObjectCollection
 
         private readonly IImmutableList<TValueObject> _Items;
 
@@ -25,8 +26,7 @@ namespace DeedCurrencyPay.Domain.Common
             {
                 throw new ArgumentNullException();
             }
-            _Items = collection.ToImmutableList();
-            _Items.AddRange(collection);
+            _Items = collection.ToImmutableList();           
         }
 
         public int Count => _Items.Count;

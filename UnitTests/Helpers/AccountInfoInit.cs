@@ -1,11 +1,10 @@
 ﻿using DeedCurrencyPay.Domain;
 using DeedCurrencyPay.Domain.Common;
-using System;
+using DeedCurrencyPay.Infrastructure.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace DeedCurrencyPay.Infrastructure.Helpers
+namespace UnitTests.Helpers
 {
     public static class AccountInfoInit
     {
@@ -26,8 +25,8 @@ namespace DeedCurrencyPay.Infrastructure.Helpers
         {
             var moneyCollection = MoneyListInit.GetMoneyList1();
 
-            return new List<AccountInfo>() {              
-                new AccountInfo(moneyCollection.ElementAt(0), new ValueObjectCollection<Money>(moneyCollection).Take(4)),                      
+            return new List<AccountInfo>() {
+                new AccountInfo(moneyCollection.ElementAt(0), new ValueObjectCollection<Money>(moneyCollection).Take(4)),
                 new AccountInfo(moneyCollection.ElementAt(4), new ValueObjectCollection<Money>(moneyCollection.Skip(4).Take(4)))
             };
         }

@@ -1,6 +1,5 @@
 ﻿using DeedCurrencyPay.Domain;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Xml;

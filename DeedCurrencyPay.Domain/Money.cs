@@ -65,9 +65,7 @@ namespace DeedCurrencyPay.Domain
         }
         public override string ToString()
         {
-            //return $"{this.Amount} {this.SelectedCurrency.ToString()}";
             return String.Format("{0:0.00}", this.Amount) + " " + this.SelectedCurrency.Name;
-
         }
 
         private static void CurrencyExceptionCheck(Money a, Money b)

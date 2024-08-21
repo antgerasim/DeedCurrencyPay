@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DeedCurrencyPay.API.Infrastructure;
+﻿using DeedCurrencyPay.API.Infrastructure;
 using DeedCurrencyPay.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace DeedCurrencyPay.API.Controllers.V1
 {

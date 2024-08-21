@@ -1,9 +1,10 @@
 ﻿using DeedCurrencyPay.Domain;
 using DeedCurrencyPay.Domain.Common;
+using DeedCurrencyPay.Infrastructure.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DeedCurrencyPay.Infrastructure.Helpers
+namespace UnitTests.Helpers
 {
     public class ValueObjectCollectionInit
     {

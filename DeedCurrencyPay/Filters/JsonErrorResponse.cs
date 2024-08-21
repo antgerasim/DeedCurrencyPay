@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DeedCurrencyPay.API.Filters
+﻿namespace DeedCurrencyPay.API.Filters
 {
     public class JsonErrorResponse
     {

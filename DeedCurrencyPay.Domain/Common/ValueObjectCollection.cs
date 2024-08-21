@@ -3,17 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
 
 namespace DeedCurrencyPay.Domain.Common
 {
     public class ValueObjectCollection<TValueObject> : IValueObjectCollection<TValueObject>
         where TValueObject : IValueObject<TValueObject>
     {
-        //todo next: let ValueObjectCollection implement IImmutableCollection with custom object initializer class like
-        //https://smellegantcode.wordpress.com/2009/01/29/using-collection-initializers-with-immutable-lists/
-        //Todo inherit IImmutableList to IValueObjectCollection
-
         private readonly IImmutableList<TValueObject> _Items;
 
         public ValueObjectCollection() : this(new List<TValueObject>())
@@ -98,7 +93,7 @@ namespace DeedCurrencyPay.Domain.Common
             return _Items.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() //dont touch!
+        IEnumerator IEnumerable.GetEnumerator() 
         {
             return _Items.GetEnumerator();
         }

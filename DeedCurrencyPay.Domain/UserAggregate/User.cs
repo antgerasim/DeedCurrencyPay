@@ -4,7 +4,7 @@
 namespace DeedCurrencyPay.Domain
 {
     public class User : Entity<User>, IAggregateRoot
-    {        
+    {
         public string Name { get; private set; }
         public Account Account { get; private set; }
 
@@ -13,7 +13,6 @@ namespace DeedCurrencyPay.Domain
             base.Id = id;
             Name = name;
             Account = account;
-           
         }
 
         public override string ToString()

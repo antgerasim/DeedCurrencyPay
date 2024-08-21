@@ -1,9 +1,7 @@
 ﻿using DeedCurrencyPay.API.ViewModels;
 using DeedCurrencyPay.Domain;
 using DeedCurrencyPay.Domain.Common;
-using DeedCurrencyPay.Domain.UserAggregate;
 using System;
-using System.Threading.Tasks;
 
 namespace DeedCurrencyPay.API.Services
 {

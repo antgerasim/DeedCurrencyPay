@@ -10,6 +10,7 @@ using DeedCurrencyPay.API.Services;
 using DeedCurrencyPay.Domain.UserAggregate;
 using DeedCurrencyPay.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
+using UnitTests.Helpers;
 
 namespace UnitTests
 {

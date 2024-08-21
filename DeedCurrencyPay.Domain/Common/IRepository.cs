@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DeedCurrencyPay.Domain.Common
+﻿namespace DeedCurrencyPay.Domain.Common
 {
-   public interface IRepository<T> where T : IAggregateRoot
+    public interface IRepository<T> where T : IAggregateRoot
     {
     }
 }

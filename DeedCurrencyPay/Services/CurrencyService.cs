@@ -1,5 +1,6 @@
 ﻿using DeedCurrencyPay.Domain;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Xml;
@@ -52,9 +53,10 @@ namespace DeedCurrencyPay.API.Services
                 rsltRate = (amount * toRate) / fromRate;
                 return new ConversionAmount(fromCurr, toCurr, rsltRate);
             }
-            catch
+            catch (Exception ex)
             {
-                return default(ConversionAmount);
+                // log exception
+                throw;
             }
         }
 
@@ -85,9 +87,10 @@ namespace DeedCurrencyPay.API.Services
                 }
                 return default(decimal);
             }
-            catch
+            catch (Exception ex)
             {
-                return default(decimal);
+                // log exception
+                throw;
             }
         }
     }
